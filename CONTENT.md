@@ -243,7 +243,7 @@ const courses = [
 ## Social & external links (fill in .env or constants file)
 ```js
 export const LINKS = {
-  youtube: "https://youtube.com/@udaanvidyapeeth",   // update with real handle
+  youtube: "https://youtube.com/@udaanvp",   // update with real handle
   instagram: "https://instagram.com/udaanvidyapeeth", // update with real handle
   whatsapp: `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}`,
   playStore: import.meta.env.VITE_PLAY_STORE_URL,

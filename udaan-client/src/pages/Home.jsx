@@ -33,7 +33,12 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="bg-brand-bg text-white pt-20 pb-28 px-6 overflow-hidden">
+      <section className="relative bg-brand-bg text-white pt-20 pb-28 px-6 overflow-hidden">
+        {/* Background Image Layer */}
+        <div className="absolute inset-0 bg-[url('/hero-bg.png')] bg-cover bg-center"></div>
+        {/* Dark Overlay for better contrast (adjusted for higher image visibility) */}
+        <div className="absolute inset-0 bg-brand-bg/45 pointer-events-none"></div>
+        
         <div className="container mx-auto max-w-5xl text-center relative z-10">
           <div className="flex flex-wrap justify-center gap-2 mb-8">
             {['JEE', 'NEET', 'CUET', 'AKTU', 'MHT-CET', 'IPU'].map(e => (
