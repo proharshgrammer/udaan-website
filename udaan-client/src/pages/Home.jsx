@@ -42,11 +42,11 @@ export default function Home() {
         <div className="container mx-auto max-w-5xl text-center relative z-10">
           <div className="flex flex-wrap justify-center gap-2 mb-8">
             {['JEE', 'NEET', 'CUET', 'AKTU', 'MHT-CET', 'IPU'].map(e => (
-               <span key={e} className="bg-white/10 border border-white/20 text-white text-xs font-medium px-4 py-1.5 rounded-full backdrop-blur-sm">{e}</span>
+               <span key={e} className="bg-brand-muted/20 border border-brand-muted/50 text-brand-accent text-xs font-semibold px-4 py-1.5 rounded-full backdrop-blur-sm">{e}</span>
             ))}
           </div>
           <h1 className="font-heading font-extrabold text-5xl md:text-7xl leading-tight mb-6">
-            Your rank. <br/><span className="text-brand-blue">Your dream college.</span><br/>Let's figure it out together.
+            Your rank. <br/><span className="text-brand-dark_blue drop-shadow-md">Your dream college.</span><br/>Let's figure it out together.
           </h1>
           <p className="font-body text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
             Expert counselling for JEE, NEET, CUET, AKTU, MHT-CET, IPU and every major state counselling across India.
@@ -137,7 +137,7 @@ export default function Home() {
             {testimonials.map((t, i) => (
               <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-brand-light text-[#0C447C] flex items-center justify-center font-heading font-bold text-lg">{t.avatar}</div>
+                  <div className="w-12 h-12 rounded-full bg-brand-light/30 text-brand-dark flex items-center justify-center font-heading font-bold text-lg">{t.avatar}</div>
                   <div>
                     <h4 className="font-heading font-semibold text-gray-900">{t.name}</h4>
                     <p className="text-xs text-brand-blue font-medium">{t.exam} · {t.rank}</p>

@@ -79,8 +79,9 @@ export default function News() {
             <div className="flex flex-col gap-2">
               {otherNotices.map(n => renderNotice(n))}
               {notices.length === 0 && (
-                <div className="text-center py-20 text-gray-500 bg-white rounded-2xl border border-gray-100 shadow-sm font-body">
-                  No notices available at the moment. Check back soon.
+                <div className="text-center py-20 font-body bg-brand-light/10 rounded-2xl border border-brand-light/30 shadow-sm flex flex-col items-center justify-center gap-3">
+                  <svg className="w-12 h-12 text-brand-muted opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H14" /></svg>
+                  <p className="text-lg font-medium text-brand-dark">No notices available at the moment. Check back soon.</p>
                 </div>
               )}
             </div>

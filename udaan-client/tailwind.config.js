@@ -8,10 +8,13 @@ export default {
     extend: {
       colors: {
         brand: {
-          blue: '#4A72A8',
-          dark: '#1A3A6B',
+          blue: '#30618C',
+          dark_blue: '#4a72a8',
+          muted: '#8EA8BF',
+          accent: '#B8CAD9',
+          light: '#F2F2F2',
           bg: '#0D0D0D',
-          light: '#E8EFF9',
+          dark: '#0D0D0D',
         }
       },
       fontFamily: {
@@ -22,4 +25,5 @@ export default {
     },
   },
   plugins: [],
+  // Trigger HMR
 }
