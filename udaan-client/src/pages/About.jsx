@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import MentorCard from '../components/MentorCard';
+import VantaBackground from '../components/VantaBackground';
 import LeadPopup from '../components/LeadPopup';
 import StickyBar from '../components/StickyBar';
 import WhatsAppFAB from '../components/WhatsAppFAB';
@@ -21,7 +22,7 @@ export default function About() {
       <Navbar />
 
       {/* Story */}
-      <section className="bg-brand-bg text-white py-20 px-6 overflow-hidden">
+      <VantaBackground className="bg-brand-bg text-white py-20 px-6 overflow-hidden">
         <div className="container mx-auto max-w-4xl text-center relative z-10">
           <h1 className="font-heading font-extrabold text-4xl md:text-5xl mb-6">Our Story</h1>
           <p className="font-body text-gray-300 text-lg leading-relaxed mb-6">
@@ -31,7 +32,7 @@ export default function About() {
             One wrong choice filling decision can cost a student their dream seat. We are here to make sure that doesn't happen. Your rank is your hard work, figuring out the best college for it is our job.
           </p>
         </div>
-      </section>
+      </VantaBackground>
 
       {/* Mentors */}
       <section id="mentors" className="py-24 px-6 bg-white shrink-0 scroll-mt-20 border-b border-gray-100">

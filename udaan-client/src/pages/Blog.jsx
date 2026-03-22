@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import VantaBackground from '../components/VantaBackground';
 import LeadPopup from '../components/LeadPopup';
 import StickyBar from '../components/StickyBar';
 import WhatsAppFAB from '../components/WhatsAppFAB';
@@ -26,12 +27,12 @@ export default function Blog() {
       </Helmet>
       <Navbar />
 
-      <div className="bg-brand-bg text-white py-16 px-6">
-        <div className="container mx-auto max-w-6xl text-center">
+      <VantaBackground className="bg-brand-bg text-white py-16 px-6">
+        <div className="container mx-auto max-w-6xl text-center relative z-10">
           <h1 className="font-heading font-extrabold text-4xl md:text-5xl mb-4">Blog & Resources</h1>
           <p className="font-body text-gray-300 max-w-2xl mx-auto text-lg">Free articles, guides, and tools to help you navigate college counselling.</p>
         </div>
-      </div>
+      </VantaBackground>
 
       <div className="container mx-auto max-w-6xl px-6 py-12 flex-1">
         

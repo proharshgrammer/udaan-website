@@ -13,9 +13,9 @@ import { useCollection } from '../hooks/useFirestore';
 import { orderBy, limit } from 'firebase/firestore';
 
 const testimonials = [
-  { name: "Arjun Sharma", exam: "JEE Main", rank: "AIR 89,420", college: "NIT Trichy — CSE", quote: "Ritik sir helped me understand exactly which round to lock in. Couldn't have made this decision alone.", avatar: "AS" },
-  { name: "Priya Verma", exam: "JEE Main", rank: "AIR 1,24,000", college: "NIT Agartala — ECE", quote: "I was completely lost after results. One session with Udaan and I had a clear college list ready.", avatar: "PV" },
-  { name: "Rohan Gupta", exam: "AKTU", rank: "State Rank 1,240", college: "HBTU Kanpur — ECE", quote: "Abhishek sir's breakdown of the AKTU seat matrix was the clearest explanation I've seen anywhere.", avatar: "RG" },
+  { name: "Yashvender Singh", exam: "JEE Main", rank: "AIR 89,420", college: "NIT Trichy — CSE", quote: "Ritik sir helped me understand exactly which round to lock in. Couldn't have made this decision alone.", avatar: "AS" },
+  { name: "Vanshika Adran", exam: "JEE Main", rank: "AIR 1,24,000", college: "NIT Agartala — ECE", quote: "I was completely lost after results. One session with Udaan and I had a clear college list ready.", avatar: "PV" },
+  { name: "Kartik Yadav", exam: "AKTU", rank: "State Rank 1,240", college: "HBTU Kanpur — ECE", quote: "Abhishek sir's breakdown of the AKTU seat matrix was the clearest explanation I've seen anywhere.", avatar: "RG" },
   { name: "Sneha Patel", exam: "MHT-CET", rank: "Percentile 97.8", college: "COEP Pune — Mechanical", quote: "The choice filling session was worth every rupee. Got my first preference college.", avatar: "SP" }
 ];
 

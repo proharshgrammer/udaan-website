@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ExamBadge from '../components/ExamBadge';
+import VantaBackground from '../components/VantaBackground';
 import LeadPopup from '../components/LeadPopup';
 import StickyBar from '../components/StickyBar';
 import WhatsAppFAB from '../components/WhatsAppFAB';
@@ -54,12 +55,12 @@ export default function News() {
       </Helmet>
       <Navbar />
 
-      <div className="bg-brand-bg text-white py-14 px-6">
-        <div className="container mx-auto max-w-4xl text-center">
+      <VantaBackground className="bg-brand-bg text-white py-14 px-6">
+        <div className="container mx-auto max-w-4xl text-center relative z-10">
           <h1 className="font-heading font-extrabold text-4xl md:text-5xl mb-4">Notice Board</h1>
           <p className="font-body text-gray-300 max-w-xl mx-auto text-lg leading-relaxed">Official updates, result dates, and counselling announcements directly from authorities.</p>
         </div>
-      </div>
+      </VantaBackground>
 
       <div className="container mx-auto max-w-3xl px-6 py-12 flex-1 relative">
         {loading ? (
