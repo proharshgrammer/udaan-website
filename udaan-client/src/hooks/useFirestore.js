@@ -7,6 +7,9 @@ export function useCollection(collectionName, constraints = []) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Serialize constraints to string to safely use in dependency array without infinite loops
+  const constraintsStr = JSON.stringify(constraints.map(c => c.type ? { type: c.type } : c));
+  
   useEffect(() => {
     const q = query(collection(db, collectionName), ...constraints);
     const unsub = onSnapshot(q,
@@ -21,7 +24,7 @@ export function useCollection(collectionName, constraints = []) {
       }
     );
     return unsub;
-  }, [collectionName]);
+  }, [collectionName, constraintsStr]);
 
   return { data, loading, error };
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { State, City } from 'country-state-city';
@@ -8,8 +8,8 @@ export default function LeadForm({ onSuccess, isLight = false }) {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const statesList = State.getStatesOfCountry('IN');
-  const citiesList = formData.stateCode ? City.getCitiesOfState('IN', formData.stateCode) : [];
+  const statesList = useMemo(() => State.getStatesOfCountry('IN'), []);
+  const citiesList = useMemo(() => formData.stateCode ? City.getCitiesOfState('IN', formData.stateCode) : [], [formData.stateCode]);
 
   const validate = () => {
     let tempErrors = {};
