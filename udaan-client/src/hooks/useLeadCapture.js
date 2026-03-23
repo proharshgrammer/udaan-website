@@ -6,11 +6,19 @@ export function useLeadCapture() {
   const [isDismissedState, setIsDismissedState] = useState(true); // default true until mounted
 
   useEffect(() => {
-    setIsDismissedState(sessionStorage.getItem(KEY) === 'true');
+    try {
+      setIsDismissedState(sessionStorage.getItem(KEY) === 'true');
+    } catch (e) {
+      console.error('sessionStorage access denied', e);
+    }
   }, []);
 
   const dismiss = () => {
-    sessionStorage.setItem(KEY, 'true');
+    try {
+      sessionStorage.setItem(KEY, 'true');
+    } catch (e) {
+      console.error('sessionStorage access denied', e);
+    }
     setIsDismissedState(true);
   };
 

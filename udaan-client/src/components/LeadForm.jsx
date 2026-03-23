@@ -44,7 +44,12 @@ export default function LeadForm({ onSuccess, isLight = false }) {
       );
       window.open(`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${msg}`, '_blank');
       
-      sessionStorage.setItem('udaan_lead_dismissed', 'true');
+      try {
+        sessionStorage.setItem('udaan_lead_dismissed', 'true');
+      } catch (e) {
+        console.error('sessionStorage error', e);
+      }
+
       if (onSuccess) onSuccess();
     } catch (error) {
       console.error("Error submitting lead: ", error);

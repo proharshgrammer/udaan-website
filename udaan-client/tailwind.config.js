@@ -17,6 +17,12 @@ export default {
           dark: '#0D0D0D',
         }
       },
+      height: {
+        screen: '100dvh',
+      },
+      minHeight: {
+        screen: '100dvh',
+      },
       fontFamily: {
         heading: ['Poppins', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
