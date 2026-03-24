@@ -1,15 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { State, City } from 'country-state-city';
 
 export default function LeadForm({ onSuccess, isLight = false }) {
-  const [formData, setFormData] = useState({ name: '', phone: '', state: '', stateCode: '', city: '', exam: '', otherExam: '', rank: '', email: '' });
+  const [formData, setFormData] = useState({ name: '', phone: '', state: '', city: '', exam: '', otherExam: '', rank: '', email: '' });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const statesList = useMemo(() => State.getStatesOfCountry('IN'), []);
-  const citiesList = useMemo(() => formData.stateCode ? City.getCitiesOfState('IN', formData.stateCode) : [], [formData.stateCode]);
 
   const validate = () => {
     let tempErrors = {};
@@ -28,10 +24,20 @@ export default function LeadForm({ onSuccess, isLight = false }) {
     e.preventDefault();
     if (!validate()) return;
     
+    // Open window synchronously to avoid iOS Safari popup blocking "invalid address" issue
+    let fallbackWindow = null;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+       fallbackWindow = window.open('', '_blank');
+       if (fallbackWindow) {
+         fallbackWindow.document.write('Loading WhatsApp... Please wait.');
+       }
+    }
+    
     setIsSubmitting(true);
     try {
       const finalExam = formData.exam === 'Other' ? formData.otherExam : formData.exam;
-      const { stateCode, otherExam, ...submitData } = formData;
+      const submitData = { ...formData };
       await addDoc(collection(db, 'leads'), {
         ...submitData,
         exam: finalExam,
@@ -42,7 +48,13 @@ export default function LeadForm({ onSuccess, isLight = false }) {
       const msg = encodeURIComponent(
         `New Udaan lead:\nName: ${formData.name}\nPhone: ${formData.phone}\nExam: ${finalExam}\nRank: ${formData.rank}\nState: ${formData.state}\nCity: ${formData.city}`
       );
-      window.open(`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+      const waUrl = `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${msg}`;
+      
+      if (fallbackWindow) {
+        fallbackWindow.location.href = waUrl;
+      } else {
+        window.open(waUrl, '_blank');
+      }
       
       try {
         sessionStorage.setItem('udaan_lead_dismissed', 'true');
@@ -52,6 +64,7 @@ export default function LeadForm({ onSuccess, isLight = false }) {
 
       if (onSuccess) onSuccess();
     } catch (error) {
+      if (fallbackWindow) fallbackWindow.close();
       console.error("Error submitting lead: ", error);
       alert("Failed to submit. Please try again or contact us directly.");
     } finally {
@@ -80,25 +93,11 @@ export default function LeadForm({ onSuccess, isLight = false }) {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>State*</label>
-          <select className={`${inputClass} ${errors.state ? 'border-red-500' : ''} ${!isLight && !formData.stateCode ? 'text-white/60' : ''}`} value={formData.stateCode} onChange={(e) => {
-            const code = e.target.value;
-            const sn = statesList.find(s => s.isoCode === code)?.name || '';
-            setFormData({...formData, stateCode: code, state: sn, city: ''});
-          }}>
-            <option value="" disabled className="text-gray-900">Select State</option>
-            {statesList.map(s => (
-              <option key={s.isoCode} value={s.isoCode} className="text-gray-900">{s.name}</option>
-            ))}
-          </select>
+          <input type="text" className={`${inputClass} ${errors.state ? 'border-red-500' : ''}`} value={formData.state} onChange={(e) => setFormData({...formData, state: e.target.value})} placeholder="Your State" />
         </div>
         <div>
           <label className={labelClass}>City*</label>
-          <select className={`${inputClass} ${errors.city ? 'border-red-500' : ''} ${!isLight && !formData.city ? 'text-white/60' : ''}`} value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} disabled={!formData.stateCode}>
-            <option value="" disabled className="text-gray-900">Select City</option>
-            {citiesList.map(c => (
-              <option key={c.name} value={c.name} className="text-gray-900">{c.name}</option>
-            ))}
-          </select>
+          <input type="text" className={`${inputClass} ${errors.city ? 'border-red-500' : ''}`} value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} placeholder="Your City" />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-4">
