@@ -23,6 +23,8 @@ export default function Footer() {
               <li><Link to="/blog" className="hover:text-brand-blue transition">Blog & Resources</Link></li>
               <li><Link to="/news" className="hover:text-brand-blue transition">Notices & News</Link></li>
               <li><Link to="/contact" className="hover:text-brand-blue transition">Contact Support</Link></li>
+              <li><Link to="/privacy-policy" className="hover:text-brand-blue transition">Privacy Policy</Link></li>
+              <li><Link to="/terms-of-use" className="hover:text-brand-blue transition">Terms of Use</Link></li>
             </ul>
           </div>
 
