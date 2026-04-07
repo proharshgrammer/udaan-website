@@ -15,10 +15,10 @@ export default function TermsOfUse() {
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-4xl">
           <h1 className="font-heading font-bold text-3xl md:text-4xl text-gray-900 mb-8 border-b pb-4">Terms of Use</h1>
-
+          
           <div className="font-body text-gray-700 space-y-6 leading-relaxed">
             <p><strong>Effective Date:</strong> {new Date().toLocaleDateString()}</p>
-
+            
             <div>
               <h2 className="font-heading font-semibold text-xl mb-3 text-gray-900">1. Acceptance of Terms</h2>
               <p>By accessing, browsing, or using the Udaan Vidyapeeth website and our educational services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use our platform or purchase any courses.</p>
@@ -36,7 +36,7 @@ export default function TermsOfUse() {
 
             <div>
               <h2 className="font-heading font-semibold text-xl mb-3 text-gray-900">4. Refunds and Cancellations</h2>
-              <p>Refunds are subject to our specific course refund policies outlined at the time of purchase. Generally, if you are unsatisfied with a course, you may request a refund within a specified window (e.g., 24 Hours from purchase), provided you have not consumed a significant portion of the course content. We reserve the right to decline refund requests that violate our policy guidelines or show signs of abuse.</p>
+              <p>Refunds are subject to our specific course refund policies outlined at the time of purchase. Generally, if you are unsatisfied with a course, you may request a refund within a specified window (e.g., 7 days from purchase), provided you have not consumed a significant portion of the course content. We reserve the right to decline refund requests that violate our policy guidelines or show signs of abuse.</p>
             </div>
 
             <div>
@@ -53,7 +53,7 @@ export default function TermsOfUse() {
               <h2 className="font-heading font-semibold text-xl mb-3 text-gray-900">7. Disclaimers and Limitation of Liability</h2>
               <p>Our courses and educational materials are provided on an "as is" and "as available" basis. Udaan Vidyapeeth makes no representations or warranties of any kind, express or implied, as to the operation of the platform or the information, content, materials, or products included. In no event shall Udaan Vidyapeeth be liable for any direct, indirect, incidental, punitive, or consequential damages arising from your use of an educational product or service.</p>
             </div>
-
+            
             <div>
               <h2 className="font-heading font-semibold text-xl mb-3 text-gray-900">8. Amendments to Terms</h2>
               <p>We reserve the right to update or modify these Terms of Use at any time. Any changes will be effective immediately upon posting to the website. Your continued use of our services following the posting of revised terms means that you accept and agree to the changes.</p>

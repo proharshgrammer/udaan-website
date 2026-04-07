@@ -68,13 +68,24 @@ export default function PrivacyPolicy() {
             </div>
 
             <div>
-              <h2 className="font-heading font-semibold text-xl mb-3 text-gray-900">8. Changes to This Privacy Policy</h2>
+              <h2 className="font-heading font-semibold text-xl mb-3 text-gray-900">8. Account and Data Deletion Policy</h2>
+              <p>You have the right to request the deletion of your account and all associated personal data.</p>
+              <h3 className="font-heading font-medium text-lg mt-4 mb-2 text-gray-800">How to delete your data:</h3>
+              <ul className="list-disc pl-6 mt-2 space-y-2">
+                <li><strong>Option 1 (Inside the App):</strong> Open the Udaan app, navigate to the Profile screen, and tap the Delete Account button at the bottom. Your data will be erased immediately.</li>
+                <li><strong>Option 2 (Via Web/Email):</strong> If you no longer have the app installed, you can request account deletion by emailing us at <a href="mailto:tech.udaanvp@gmail.com" className="text-blue-600 hover:underline">tech.udaanvp@gmail.com</a> from your registered email address. Please use the subject line "Account Deletion Request". We will process your request and permanently delete your account data within 7 business days.</li>
+              </ul>
+              <p className="mt-4 text-sm text-gray-600"><em>Note: We may retain certain transaction data (such as purchase history) for legal and tax compliance purposes.</em></p>
+            </div>
+
+            <div>
+              <h2 className="font-heading font-semibold text-xl mb-3 text-gray-900">9. Changes to This Privacy Policy</h2>
               <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Effective Date" at the top. We encourage you to review this Privacy Policy periodically for any changes.</p>
             </div>
 
             <div>
-              <h2 className="font-heading font-semibold text-xl mb-3 text-gray-900">9. Contact Us</h2>
-              <p>If you have any questions or concerns about this Privacy Policy, your personal data, or our practices, please contact our support team at our official contact email.</p>
+              <h2 className="font-heading font-semibold text-xl mb-3 text-gray-900">10. Contact Us</h2>
+              <p>If you have any questions or concerns about this Privacy Policy, your personal data, or our practices, please contact our support team at <a href="mailto:tech.udaanvp@gmail.com" className="text-blue-600 hover:underline">tech.udaanvp@gmail.com</a>.</p>
             </div>
           </div>
         </div>
