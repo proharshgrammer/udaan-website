@@ -11,6 +11,7 @@ import StickyBar from '../components/StickyBar';
 import WhatsAppFAB from '../components/WhatsAppFAB';
 import { useCollection } from '../hooks/useFirestore';
 import { orderBy, limit } from 'firebase/firestore';
+import { COLLECTIONS } from '../config/collections';
 
 const testimonials = [
   { name: "Yashvender Singh", exam: "JEE Main", rank: "AIR 89,420", college: "NIT Trichy — CSE", quote: "Ritik sir helped me understand exactly which round to lock in. Couldn't have made this decision alone.", avatar: "AS" },
@@ -19,9 +20,11 @@ const testimonials = [
   { name: "Ananya Patel", exam: "MHT-CET", rank: "Percentile 97.8", college: "COEP Pune — Mechanical", quote: "The choice filling session was worth every rupee. Got my first preference college.", avatar: "SP" }
 ];
 
+import BannerCarousel from '../components/BannerCarousel';
+
 export default function Home() {
-  const { data: mentors } = useCollection('team', [orderBy('order')]);
-  const { data: courses } = useCollection('courses', [orderBy('order')]); // normally where active==true
+  const { data: mentors } = useCollection(COLLECTIONS.MENTORS);
+  const { data: courses } = useCollection(COLLECTIONS.COURSES, [orderBy('createdDate', 'desc')]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -31,6 +34,8 @@ export default function Home() {
       </Helmet>
       
       <Navbar />
+      
+      <BannerCarousel />
 
       {/* Hero Section */}
       <section className="relative bg-brand-bg text-white pt-20 pb-28 px-6 overflow-hidden">
@@ -46,7 +51,7 @@ export default function Home() {
             ))}
           </div>
           <h1 className="font-heading font-extrabold text-5xl md:text-7xl leading-tight mb-6">
-            Your rank. <br/><span className="text-brand-dark_blue drop-shadow-md">Your dream college.</span><br/>Let's figure it out together.
+            Your rank. <br/><span className="text-brand-accent drop-shadow-md">Your dream college.</span><br/>Let's figure it out together.
           </h1>
           <p className="font-body text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
             Expert counselling for JEE, NEET, CUET, AKTU, MHT-CET, IPU and every major state counselling across India.
@@ -65,11 +70,11 @@ export default function Home() {
       {/* Stats Strip */}
       <section className="bg-brand-blue py-12 px-6">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-white/20">
-            <div><div className="font-heading font-bold text-4xl text-white mb-1">6000+</div><div className="text-brand-light/90 font-medium text-sm">Students guided</div></div>
-            <div><div className="font-heading font-bold text-4xl text-white mb-1">50+</div><div className="text-brand-light/90 font-medium text-sm">Colleges covered</div></div>
-            <div className="hidden md:block"><div className="font-heading font-bold text-4xl text-white mb-1">10+</div><div className="text-brand-light/90 font-medium text-sm">Exams we handle</div></div>
-            <div className="hidden md:block"><div className="font-heading font-bold text-4xl text-white mb-1">3</div><div className="text-brand-light/90 font-medium text-sm">Years of expertise</div></div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center">
+            <div className="border-r border-white/20 md:border-r"><div className="font-heading font-bold text-3xl md:text-4xl text-white mb-1">6000+</div><div className="text-brand-light/90 font-medium text-sm">Students guided</div></div>
+            <div className="md:border-r md:border-white/20"><div className="font-heading font-bold text-3xl md:text-4xl text-white mb-1">50+</div><div className="text-brand-light/90 font-medium text-sm">Colleges covered</div></div>
+            <div className="border-r border-white/20 md:border-r"><div className="font-heading font-bold text-3xl md:text-4xl text-white mb-1">10+</div><div className="text-brand-light/90 font-medium text-sm">Exams we handle</div></div>
+            <div><div className="font-heading font-bold text-3xl md:text-4xl text-white mb-1">3</div><div className="text-brand-light/90 font-medium text-sm">Years of expertise</div></div>
           </div>
         </div>
       </section>

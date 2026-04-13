@@ -8,9 +8,62 @@ import StickyBar from '../components/StickyBar';
 import WhatsAppFAB from '../components/WhatsAppFAB';
 import { useCollection } from '../hooks/useFirestore';
 import { orderBy, where } from 'firebase/firestore';
+import { COLLECTIONS } from '../config/collections';
+
+// Extract YouTube video ID from various URL formats
+function getYouTubeId(url) {
+  if (!url) return null;
+  const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+}
+
+function YouTubeEmbed({ url, title }) {
+  const [playing, setPlaying] = useState(false);
+  const videoId = getYouTubeId(url);
+
+  if (!videoId) return null;
+
+  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+
+  return (
+    <div className="bg-gray-100 rounded-xl aspect-video overflow-hidden relative group cursor-pointer shadow-sm">
+      {playing ? (
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+          title={title || 'YouTube video'}
+          className="w-full h-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      ) : (
+        <div onClick={() => setPlaying(true)} className="w-full h-full relative">
+          <img
+            src={thumbnailUrl}
+            alt={title || 'Video thumbnail'}
+            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+          />
+          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition flex items-center justify-center">
+            <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition">
+              <svg className="w-7 h-7 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+          </div>
+          {title && (
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+              <p className="text-white font-heading font-semibold text-sm truncate">{title}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Blog() {
   const { data: blogs, loading } = useCollection('blogs', [where('published', '==', true), orderBy('date', 'desc')]);
+  const { data: featuredVideos, loading: videosLoading } = useCollection(COLLECTIONS.FEATURED_VIDEOS, [orderBy('order', 'asc')]);
   const [filter, setFilter] = useState('All');
 
   const exams = ['All', 'JEE', 'NEET', 'CUET', 'AKTU', 'MHT-CET', 'IPU'];
@@ -96,19 +149,29 @@ export default function Blog() {
           )}
         </div>
 
-        {/* Videos Section */}
+        {/* Featured Videos Section */}
         <div className="mb-16">
           <h2 className="font-heading font-bold text-2xl mb-6 text-gray-900 border-l-4 border-red-500 pl-4">Featured Videos</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gray-200 rounded-xl aspect-video flex items-center justify-center relative group overflow-hidden cursor-pointer shadow-sm">
-               <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition"></div>
-               <svg className="w-16 h-16 text-red-600 drop-shadow-md z-10 group-hover:scale-110 transition" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+          {videosLoading ? (
+            <div className="text-center py-12 text-gray-500 font-medium flex gap-3 justify-center items-center">
+              <svg className="animate-spin h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Loading videos...
             </div>
-            <div className="bg-gray-200 rounded-xl aspect-video flex items-center justify-center relative group overflow-hidden cursor-pointer shadow-sm">
-               <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition"></div>
-               <svg className="w-16 h-16 text-red-600 drop-shadow-md z-10 group-hover:scale-110 transition" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+          ) : featuredVideos.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {featuredVideos.map(video => (
+                <YouTubeEmbed key={video.id} url={video.url} title={video.title} />
+              ))}
             </div>
-          </div>
+          ) : (
+            <div className="text-center py-12 text-gray-400 bg-white rounded-2xl border border-gray-100">
+              <svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+              <p className="font-medium">No featured videos yet. Check back soon!</p>
+            </div>
+          )}
           <div className="mt-6 text-center">
              <a href={import.meta.env.VITE_YOUTUBE_URL || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-red-600 font-medium hover:underline">
                Subscribe to our channel →

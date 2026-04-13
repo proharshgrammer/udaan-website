@@ -73,7 +73,7 @@ export default function LeadForm({ onSuccess, isLight = false }) {
   };
 
   const inputClass = `w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-brand-blue transition font-body text-sm ${
-    isLight ? 'bg-white border-gray-200 text-gray-900 placeholder:text-gray-400' : 'bg-white/10 border-white/20 text-white placeholder:text-white/60'
+    isLight ? 'bg-white border-gray-200 text-gray-900 placeholder:text-gray-400' : 'bg-white/15 border-white/25 text-white placeholder:text-white/60'
   }`;
   
   const labelClass = `block text-sm font-medium mb-1.5 ${isLight ? 'text-gray-700' : 'text-white/90'}`;

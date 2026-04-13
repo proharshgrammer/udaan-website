@@ -8,10 +8,10 @@ import LeadPopup from '../components/LeadPopup';
 import StickyBar from '../components/StickyBar';
 import WhatsAppFAB from '../components/WhatsAppFAB';
 import { useCollection } from '../hooks/useFirestore';
-import { orderBy } from 'firebase/firestore';
+import { COLLECTIONS } from '../config/collections';
 
 export default function About() {
-  const { data: mentors, loading } = useCollection('team', [orderBy('order')]);
+  const { data: mentors, loading } = useCollection(COLLECTIONS.MENTORS);
 
   return (
     <div className="min-h-screen bg-white">

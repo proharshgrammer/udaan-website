@@ -1,15 +1,19 @@
 import React from 'react';
+import { useLeadCapture } from '../hooks/useLeadCapture';
 
 export default function WhatsAppFAB() {
   const number = import.meta.env.VITE_WHATSAPP_NUMBER;
   const url = `https://wa.me/${number}?text=Hi! I need counselling guidance`;
+  const { isDismissed } = useLeadCapture();
 
   return (
     <a 
       href={url}
       target="_blank" 
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+      className={`fixed right-6 z-50 bg-[#25D366] text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:scale-105 transition-all duration-300 ${
+        isDismissed ? 'bottom-6' : 'bottom-20'
+      }`}
       aria-label="Chat on WhatsApp"
     >
       <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

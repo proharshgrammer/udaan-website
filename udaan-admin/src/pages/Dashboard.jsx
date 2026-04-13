@@ -5,19 +5,14 @@ import { orderBy } from 'firebase/firestore';
 export default function Dashboard() {
   const { data: leads } = useCollection('leads', [orderBy('createdAt', 'desc')]);
   const { data: blogs } = useCollection('blogs');
-  const { data: courses } = useCollection('courses');
-  const { data: notices } = useCollection('notices');
 
   const unreadLeads = leads.filter(l => !l.read).length;
   const publishedBlogs = blogs.filter(b => b.published).length;
-  const activeCourses = courses.filter(c => c.active).length;
 
   const stats = [
     { label: 'Total Leads', value: leads.length, color: 'bg-blue-50 text-blue-700 border-blue-100' },
     { label: 'Unread Leads', value: unreadLeads, color: 'bg-red-50 text-red-700 border-red-100' },
     { label: 'Published Blogs', value: publishedBlogs, color: 'bg-green-50 text-green-700 border-green-100' },
-    { label: 'Active Courses', value: activeCourses, color: 'bg-purple-50 text-purple-700 border-purple-100' },
-    { label: 'Total Notices', value: notices.length, color: 'bg-orange-50 text-orange-700 border-orange-100' },
   ];
 
   return (

@@ -3,12 +3,10 @@ import { Suspense, lazy } from 'react'
 
 const Login = lazy(() => import('./pages/Login'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
-const Notices = lazy(() => import('./pages/Notices'))
 const Blog = lazy(() => import('./pages/Blog'))
-const Courses = lazy(() => import('./pages/Courses'))
-const Team = lazy(() => import('./pages/Team'))
 const Leads = lazy(() => import('./pages/Leads'))
 const Media = lazy(() => import('./pages/Media'))
+const FeaturedVideos = lazy(() => import('./pages/FeaturedVideos'))
 
 import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Sidebar';
@@ -29,12 +27,10 @@ function App() {
           
           <Route path="/" element={<ProtectedRoute><Layout><Navigate to="/dashboard" replace /></Layout></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
-          <Route path="/notices" element={<ProtectedRoute><Layout><Notices /></Layout></ProtectedRoute>} />
           <Route path="/blog" element={<ProtectedRoute><Layout><Blog /></Layout></ProtectedRoute>} />
-          <Route path="/courses" element={<ProtectedRoute><Layout><Courses /></Layout></ProtectedRoute>} />
-          <Route path="/team" element={<ProtectedRoute><Layout><Team /></Layout></ProtectedRoute>} />
           <Route path="/leads" element={<ProtectedRoute><Layout><Leads /></Layout></ProtectedRoute>} />
           <Route path="/media" element={<ProtectedRoute><Layout><Media /></Layout></ProtectedRoute>} />
+          <Route path="/featured-videos" element={<ProtectedRoute><Layout><FeaturedVideos /></Layout></ProtectedRoute>} />
         </Routes>
       </Suspense>
     </Router>

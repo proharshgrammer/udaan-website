@@ -9,16 +9,12 @@ import StickyBar from '../components/StickyBar';
 import WhatsAppFAB from '../components/WhatsAppFAB';
 import { useCollection } from '../hooks/useFirestore';
 import { orderBy } from 'firebase/firestore';
+import { COLLECTIONS } from '../config/collections';
 
 export default function Courses() {
-  const { data: courses, loading } = useCollection('courses', [orderBy('order')]);
-  const [filter, setFilter] = useState('All');
+  const { data: courses, loading } = useCollection(COLLECTIONS.COURSES, [orderBy('createdDate', 'desc')]);
 
-  const exams = ['All', 'JEE', 'NEET', 'CUET', 'State'];
-  
-  const filteredCourses = filter === 'All' 
-    ? courses 
-    : courses.filter(c => c.exam === filter || (filter === 'State' && !['JEE','NEET','CUET'].includes(c.exam)));
+  const filteredCourses = courses || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -35,21 +31,9 @@ export default function Courses() {
         </div>
       </VantaBackground>
 
-      <div className="container mx-auto max-w-6xl px-6 py-12">
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {exams.map(e => (
-            <button 
-              key={e}
-              onClick={() => setFilter(e)}
-              className={`px-5 py-2.5 rounded-full font-heading font-semibold transition text-sm ${
-                filter === e ? 'bg-brand-blue text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-blue hover:text-brand-blue'
-              }`}
-            >
-              {e}
-            </button>
-          ))}
-        </div>
 
+
+      <div className="container mx-auto max-w-6xl px-6 py-12">
         {loading ? (
           <div className="text-center py-20 text-gray-500 font-medium font-body flex gap-3 justify-center items-center">
             <svg className="animate-spin h-5 w-5 text-brand-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

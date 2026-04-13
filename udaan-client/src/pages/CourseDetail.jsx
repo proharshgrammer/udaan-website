@@ -1,37 +1,135 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useCollection } from '../hooks/useFirestore';
 import MentorCard from '../components/MentorCard';
+import { useAuth } from '../contexts/AuthContext';
+import EnrolledCourseView from './EnrolledCourseView';
 
 export default function CourseDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { data: mentors } = useCollection('team');
+  const [processing, setProcessing] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [enrollmentDetails, setEnrollmentDetails] = useState(null);
+  
+  const { data: mentors } = useCollection('mentors');
 
   useEffect(() => {
-    async function fetchCourse() {
+    async function fetchCourseAndEnrollment() {
       try {
         const docRef = doc(db, 'courses', id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setCourse({ id, ...docSnap.data() });
         }
+
+        if (currentUser) {
+           const studentDocRef = doc(db, 'courses', id, 'students', currentUser.uid);
+           const studentSnap = await getDoc(studentDocRef);
+           if (studentSnap.exists()) {
+              setIsEnrolled(true);
+              setEnrollmentDetails(studentSnap.data());
+           }
+        }
       } catch (err) {
-        console.error("Failed to fetch course", err);
+        console.error("Failed to fetch course data", err);
       } finally {
         setLoading(false);
       }
     }
-    fetchCourse();
-  }, [id]);
+    fetchCourseAndEnrollment();
+  }, [id, currentUser]);
+
+  const handlePayment = async () => {
+    if (!currentUser) {
+      alert("Please login to purchase this course.");
+      navigate('/login');
+      return;
+    }
+
+    setProcessing(true);
+    try {
+      // 1. Hit the custom Firebase Cloud Function
+      const token = await currentUser.getIdToken();
+      const response = await fetch('https://createorder-tiwdj3kb2a-uc.a.run.app', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          courseId: course.id,
+          userId: currentUser.uid,
+          amount: course.price
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create order from server.');
+      }
+
+      const data = await response.json();
+      // Assume mapping either raw razorpay order object OR a custom wrapped field.
+      const orderId = data.id || data.orderId || (data.data && data.data.id); 
+
+      if (!orderId) {
+         throw new Error("Invalid orderId returned from server.");
+      }
+
+      // 2. Open Razorpay Checkout
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || '', // Make sure this is in your .env
+        amount: course.price * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        currency: "INR",
+        name: "Udaan Vidyapeeth",
+        description: `Purchase: ${course.name}`,
+        order_id: orderId,
+        handler: function (response) {
+            // Webhook will usually fulfil the order in backend, but we can redirect the user forward
+            alert("Payment successful! Redirecting to Dashboard.");
+            navigate('/my-courses');
+        },
+        prefill: {
+            name: currentUser.displayName || '',
+            email: currentUser.email || '',
+        },
+        theme: {
+            color: "#0C447C" // Brand Blue
+        }
+      };
+
+      if (!window.Razorpay) {
+         throw new Error("Razorpay SDK not loaded.");
+      }
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response){
+          alert("Payment Failed: " + response.error.description);
+      });
+      rzp.open();
+
+    } catch (err) {
+      console.error(err);
+      alert("Error initiating payment: " + err.message);
+    } finally {
+      setProcessing(false);
+    }
+  };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="w-8 h-8 rounded-full border-4 border-brand-blue border-t-transparent animate-spin"></div></div>;
   if (!course) return <div className="min-h-screen flex items-center justify-center">Course not found.</div>;
+
+  if (isEnrolled) {
+    return <EnrolledCourseView course={course} enrollmentDetails={enrollmentDetails} />;
+  }
 
   const discount = (course.originalPrice && course.price && course.originalPrice > course.price) 
     ? Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100) 
@@ -41,7 +139,7 @@ export default function CourseDetail() {
     <div className="bg-gray-50 min-h-screen font-body flex flex-col">
       <Navbar />
       
-      <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-8 lg:py-12 mt-20">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-8 lg:py-12 mt-2">
          {/* Course Header Sheet */}
          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8 flex flex-col md:flex-row items-stretch">
             {/* Left Content */}
@@ -70,15 +168,19 @@ export default function CourseDetail() {
                         {discount > 0 && <span className="bg-green-50 text-green-700 text-sm font-bold px-2.5 py-1.5 rounded border border-green-200">{discount}% OFF</span>}
                      </div>
                   </div>
-                  <button className="bg-brand-blue hover:bg-brand-dark text-white font-heading font-bold text-xl px-10 py-4 rounded-xl shadow-lg shadow-brand-blue/30 transition-all transform hover:scale-105 w-full sm:w-auto mt-2 sm:mt-0 tracking-wide">
-                     BUY NOW
+                  <button 
+                     disabled={processing}
+                     onClick={handlePayment}
+                     className="bg-brand-blue hover:bg-brand-dark text-white font-heading font-bold text-xl px-10 py-4 rounded-xl shadow-lg shadow-brand-blue/30 transition-all transform hover:scale-105 w-full sm:w-auto mt-2 sm:mt-0 tracking-wide disabled:opacity-50 disabled:transform-none"
+                  >
+                     {processing ? 'WAIT...' : 'BUY NOW'}
                   </button>
                </div>
             </div>
             {/* Right Banner Image */}
             <div className="w-full md:w-[45%] shrink-0 bg-gray-100 relative min-h-[250px] md:min-h-full">
-               {course.thumbnail ? (
-                  <img src={course.thumbnail} alt={course.name} className="absolute inset-0 w-full h-full object-cover" />
+               {(course.thumbnail || course.thumbnailUrl) ? (
+                  <img src={course.thumbnail || course.thumbnailUrl} alt={course.name} className="absolute inset-0 w-full h-full object-cover" />
                ) : (
                   <div className="absolute inset-0 bg-gradient-to-br from-brand-light to-brand-blue flex items-center justify-center p-8 text-center text-white font-heading font-bold text-3xl">
                      {course.name}

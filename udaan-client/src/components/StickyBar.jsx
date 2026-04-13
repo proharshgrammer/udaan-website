@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLeadCapture } from '../hooks/useLeadCapture';
 
 export default function StickyBar() {
   const { isDismissed, dismiss } = useLeadCapture();
+  const navigate = useNavigate();
 
   if (isDismissed) return null;
 
@@ -15,10 +17,7 @@ export default function StickyBar() {
         
         <div className="flex items-center gap-3 shrink-0">
           <button 
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: 'smooth' }); // Just scroll up slightly or directly open popup? Actually, direct to contact page is better!
-              window.location.href = '/contact';
-            }}
+            onClick={() => navigate('/contact')}
             className="bg-brand-blue hover:bg-brand-dark text-white rounded-full px-5 py-2 font-heading font-semibold text-sm transition"
           >
             Book Now
