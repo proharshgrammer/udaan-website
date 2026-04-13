@@ -9,8 +9,8 @@ export default function MentorTeaser({ mentors }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {mentors.slice(0, 2).map((mentor, i) => (
           <div key={i} className="flex items-center gap-6 bg-white rounded-2xl p-8 shadow-sm border border-gray-50 hover:shadow-md transition">
-            {mentor.photo ? (
-              <img src={mentor.photo} alt={mentor.name} className="w-20 h-20 rounded-full object-cover shrink-0 shadow-sm" />
+            {(mentor.photo || mentor.imageUrl) ? (
+              <img src={mentor.photo || mentor.imageUrl} alt={mentor.name} className="w-20 h-20 rounded-full object-cover shrink-0 shadow-sm" />
             ) : (
                <div 
                 className="w-20 h-20 rounded-full flex items-center justify-center text-white font-heading font-medium text-2xl shrink-0 shadow-sm"
