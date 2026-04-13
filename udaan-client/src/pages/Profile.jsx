@@ -74,17 +74,11 @@ export default function Profile() {
 
       <div className="container mx-auto px-4 py-12 flex-1 max-w-3xl">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="bg-brand-blue px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-brand-blue px-8 py-6">
             <div>
               <h1 className="text-2xl font-heading font-bold text-white">Student Profile</h1>
               <p className="text-blue-100 mt-1">Manage your personal information and preferences.</p>
             </div>
-            <button 
-              onClick={() => logout()} 
-              className="bg-red-500 hover:bg-red-600 text-white font-body text-sm font-semibold px-5 py-2.5 rounded-lg border border-red-600 shadow-sm transition self-start sm:self-auto"
-            >
-              Logout
-            </button>
           </div>
           
           <div className="p-8">
@@ -150,7 +144,14 @@ export default function Profile() {
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-gray-100 flex justify-end">
+                <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
+                  <button 
+                    type="button"
+                    onClick={() => logout()} 
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50 font-body text-sm font-semibold px-4 py-2.5 rounded-lg transition"
+                  >
+                    Logout
+                  </button>
                   <button type="submit" disabled={saving} className="bg-brand-blue hover:bg-brand-dark text-white px-8 py-2.5 rounded-lg font-heading font-semibold transition disabled:opacity-50">
                     {saving ? 'Saving...' : 'Save Profile'}
                   </button>

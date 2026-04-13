@@ -65,6 +65,7 @@ export default function CourseCard({ course, isEnrolled }) {
         <p className="text-gray-600 text-sm mb-5 leading-relaxed">{shortAbout}</p>
         
         <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col gap-4">
+          {!isEnrolled && (
           <div className="flex justify-between items-end">
              <div>
                 {hasDiscount && (
@@ -84,6 +85,7 @@ export default function CourseCard({ course, isEnrolled }) {
                 </div>
              )}
           </div>
+          )}
           
           <div className={`${isEnrolled ? 'flex justify-center' : 'grid grid-cols-2'} gap-3`}>
             {isEnrolled ? (
