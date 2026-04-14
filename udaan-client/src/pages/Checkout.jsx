@@ -168,29 +168,24 @@ export default function Checkout() {
       const createOrder = httpsCallable(functions, 'createOrder');
       const result = await createOrder({
         courseId: course.id,
-        userId: currentUser.uid,
-        amount: Math.round(totalPrice), // Ensure it's passed as an integer
-        couponCode: appliedCoupon?.code || null,
-        discountCode: appliedCoupon?.code || null,
         promoCode: appliedCoupon?.code || null,
       });
 
       const data = result.data;
-      const orderId = data.id || data.orderId || (data.data && data.data.id);
-      const exactBackendAmount = data.amount || (data.data && data.data.amount) || Math.round(totalPrice * 100);
+      const orderId = data.orderId || data.id;
       
-      if (!orderId) throw new Error('Invalid order response parameters.');
+      if (!orderId) throw new Error('Order creation failed. Please try again.');
 
       // 3. Open Razorpay Checkout
+      // NOTE: Do NOT pass `amount` or `currency` — Razorpay infers them
+      // from the order_id. Passing a mismatched amount causes an instant crash.
       if (!window.Razorpay) throw new Error('Payment SDK not loaded. Please reload.');
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || '',
-        amount: exactBackendAmount, // Must be strict integer or Razorpay UI crashes
-        currency: 'INR',
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        order_id: orderId,
         name: 'Udaan Vidyapeeth',
         description: `Purchase: ${course.name}`,
-        order_id: orderId,
         handler: async function (response) {
           try {
             // Write enrollment directly to Firestore to guarantee immediate access
@@ -198,7 +193,7 @@ export default function Checkout() {
             await setDoc(doc(db, COLLECTIONS.COURSES, course.id, 'students', currentUser.uid), {
               studentId: currentUser.uid,
               studentName: form.name,
-              name: form.name, // Keep name just in case other parts of the app use it
+              name: form.name,
               email: form.email,
               phoneNumber: form.phoneNumber,
               enrolledAt: serverTimestamp(),
@@ -222,12 +217,6 @@ export default function Checkout() {
         },
         theme: { color: '#0C447C' }
       };
-
-      // DEBUG: Alert options so we can identify the crash cause
-      alert("DEBUG - Razorpay Options:\n" + JSON.stringify({
-        ...options,
-        key: "HIDDEN_FOR_SECURITY" // Don't show the secret/key on screen
-      }, null, 2));
 
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', function (res) {
