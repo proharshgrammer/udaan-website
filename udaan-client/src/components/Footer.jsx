@@ -8,9 +8,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-12">
           
           <div className="col-span-1 md:col-span-1 border-b border-gray-800 pb-8 md:border-0 md:pb-0">
-            <img src="/logo-dark.png" alt="Udaan Vidyapeeth" className="h-10 mb-4" />
-            <p className="text-gray-400 text-sm font-body leading-relaxed max-w-xs">
-              Your rank. Your dream college. Let's figure it out together.
+            <div className="flex items-center gap-3 mb-4">
+              <img src="/logo-dark.png" alt="Udaan Vidyapeeth" className="h-10" />
+              <span className="font-heading font-bold text-xl tracking-wide">Udaan Vidyapeeth</span>
+            </div>
+            <p className="text-gray-400 text-sm font-body leading-relaxed max-w-xs mt-2">
+              Your rank. Your dream college.<br />Let's figure it out together.
             </p>
           </div>
 

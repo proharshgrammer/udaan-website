@@ -154,26 +154,20 @@ export default function Checkout() {
       }, { merge: true });
 
       // 2. Create Razorpay order via Cloud Function
-      const token = await currentUser.getIdToken();
-      const response = await fetch('https://createorder-tiwdj3kb2a-uc.a.run.app', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          courseId: course.id,
-          userId: currentUser.uid,
-          amount: totalPrice,
-          couponCode: appliedCoupon?.code || null,
-        })
+      const { functions } = await import('../firebase');
+      const { httpsCallable } = await import('firebase/functions');
+      
+      const createOrder = httpsCallable(functions, 'createOrder');
+      const result = await createOrder({
+        courseId: course.id,
+        userId: currentUser.uid,
+        amount: Math.round(totalPrice), // Ensure it's passed as an integer
+        couponCode: appliedCoupon?.code || null,
       });
 
-      if (!response.ok) throw new Error('Failed to create order.');
-
-      const data = await response.json();
+      const data = result.data;
       const orderId = data.id || data.orderId || (data.data && data.data.id);
-      if (!orderId) throw new Error('Invalid order response.');
+      if (!orderId) throw new Error('Invalid order response parameters.');
 
       // 3. Open Razorpay Checkout
       if (!window.Razorpay) throw new Error('Payment SDK not loaded. Please reload.');
@@ -204,7 +198,7 @@ export default function Checkout() {
 
     } catch (err) {
       console.error(err);
-      alert('Something went wrong. Please try again.');
+      alert('Error initiating payment: ' + (err.message || 'Please try again.'));
     } finally {
       setProcessing(false);
     }
@@ -363,20 +357,27 @@ export default function Checkout() {
                     <button onClick={removeCoupon} className="text-red-400 hover:text-red-600 text-xs font-bold transition">Remove</button>
                   </div>
                 ) : (
-                  <div className="flex gap-2">
+                  <div className="relative flex items-center group">
+                    <div className="absolute left-3.5 text-gray-400 group-focus-within:text-brand-blue transition-colors">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>
+                    </div>
                     <input
                       type="text"
                       value={couponCode}
                       onChange={(e) => { setCouponCode(e.target.value); setCouponError(''); }}
-                      placeholder="Enter code"
-                      className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue focus:outline-none transition font-medium text-sm"
+                      placeholder="Enter promo code"
+                      className="w-full pl-11 pr-[88px] py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue focus:outline-none transition font-medium text-sm bg-gray-50 uppercase placeholder:normal-case"
                     />
                     <button
                       onClick={handleApplyCoupon}
                       disabled={couponLoading || !couponCode.trim()}
-                      className="bg-brand-blue hover:bg-brand-dark text-white font-bold px-5 py-3 rounded-xl text-sm transition disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                      className="absolute right-1.5 top-1.5 bottom-1.5 bg-brand-blue hover:bg-brand-dark text-white font-bold px-4 rounded-lg text-sm transition-all disabled:opacity-100 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed shadow-sm active:scale-95 disabled:active:scale-100"
                     >
-                      {couponLoading ? '...' : 'Apply'}
+                      {couponLoading ? (
+                        <span className="flex items-center gap-1">
+                          <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                        </span>
+                      ) : 'Apply'}
                     </button>
                   </div>
                 )}
