@@ -182,8 +182,28 @@ export default function Checkout() {
         name: 'Udaan Vidyapeeth',
         description: `Purchase: ${course.name}`,
         order_id: orderId,
-        handler: function () {
-          navigate('/my-courses');
+        handler: async function (response) {
+          try {
+            // Write enrollment directly to Firestore to guarantee immediate access
+            const { serverTimestamp } = await import('firebase/firestore');
+            await setDoc(doc(db, COLLECTIONS.COURSES, course.id, 'students', currentUser.uid), {
+              studentId: currentUser.uid,
+              name: form.name,
+              email: form.email,
+              phoneNumber: form.phoneNumber,
+              enrolledAt: serverTimestamp(),
+              paymentId: response.razorpay_payment_id || 'manual',
+              orderId: response.razorpay_order_id || 'manual',
+              pricePaid: totalPrice,
+              couponApplied: appliedCoupon?.code || null
+            }, { merge: true });
+            
+            navigate('/my-courses');
+          } catch (err) {
+            console.error("Enrollment error: ", err);
+            alert("Payment successful, but error updating dashboard. Support will sync this shortly.");
+            navigate('/my-courses');
+          }
         },
         prefill: {
           name: form.name,
