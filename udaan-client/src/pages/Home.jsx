@@ -40,7 +40,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative bg-brand-bg text-white pt-20 pb-28 px-6 overflow-hidden">
         {/* Background Image Layer */}
-        <div className="absolute inset-0 bg-[url('/hero-bg.png')] bg-cover bg-center"></div>
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/hero-bg.png')" }}></div>
         {/* Dark Overlay for better contrast (adjusted for higher image visibility) */}
         <div className="absolute inset-0 bg-brand-bg/45 pointer-events-none"></div>
         
