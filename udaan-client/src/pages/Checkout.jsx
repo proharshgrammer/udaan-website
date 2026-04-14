@@ -188,7 +188,8 @@ export default function Checkout() {
             const { serverTimestamp } = await import('firebase/firestore');
             await setDoc(doc(db, COLLECTIONS.COURSES, course.id, 'students', currentUser.uid), {
               studentId: currentUser.uid,
-              name: form.name,
+              studentName: form.name,
+              name: form.name, // Keep name just in case other parts of the app use it
               email: form.email,
               phoneNumber: form.phoneNumber,
               enrolledAt: serverTimestamp(),
