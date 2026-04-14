@@ -127,13 +127,18 @@ export default function Checkout() {
     setCouponError('');
   };
 
-  // Compute final price
-  const coursePrice = course?.price || 0;
-  const discountAmount = appliedCoupon ? Math.round(coursePrice * (appliedCoupon.discountPercentage / 100)) : 0;
-  const calculatedPrice = coursePrice - discountAmount;
-  // Razorpay requires a minimum amount of 1 INR. 
-  // If a 100% coupon is applied, default to charging ₹1 (like the mobile app does).
-  const totalPrice = calculatedPrice <= 0 ? 1 : calculatedPrice;
+  // Synchronize exact backend math to prevent Razorpay UI discrepancies
+  const coursePrice = course?.discountedPrice || course?.price || 0;
+  let finalPrice = coursePrice;
+  
+  if (appliedCoupon) {
+    const discountAmount = (finalPrice * Number(appliedCoupon.discountPercentage)) / 100;
+    finalPrice = finalPrice - discountAmount;
+  }
+
+  // Backend does: Math.floor(finalPrice * 100)
+  const amountInPaise = Math.max(100, Math.floor(finalPrice * 100)); // enforce min 1 INR (100 paise)
+  const totalPrice = amountInPaise / 100;
 
   // Validate required fields
   const isFormValid = form.name.trim() && form.email.trim() && form.phoneNumber.trim() && form.homeState && form.crlRank.trim();
@@ -183,7 +188,7 @@ export default function Checkout() {
         currency: 'INR',
         name: 'Udaan Vidyapeeth',
         description: `Purchase: ${course.name}`,
-        ...(!appliedCoupon && { order_id: orderId }),
+        order_id: orderId,
         handler: async function (response) {
           try {
             // Write enrollment directly to Firestore to guarantee immediate access
@@ -413,21 +418,20 @@ export default function Checkout() {
               {/* Price Breakdown */}
               <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
                 <h3 className="font-heading font-bold text-lg text-gray-900 mb-4">Order Summary</h3>
-                <div className="space-y-3 text-sm font-medium">
-                  <div className="flex justify-between text-gray-600">
-                    <span>Course Price</span>
-                    <span>₹{coursePrice.toLocaleString('en-IN')}</span>
+                <div className="flex justify-between items-center text-sm mb-3">
+                  <span className="text-gray-600">Course Price</span>
+                  <span className="font-semibold px-1">₹{coursePrice.toLocaleString('en-IN')}</span>
+                </div>
+                {appliedCoupon && (
+                  <div className="flex justify-between items-center text-sm mb-3 text-green-600">
+                    <span>Discount ({appliedCoupon.discountPercentage}%)</span>
+                    <span className="font-semibold">- ₹{Math.floor(coursePrice * (appliedCoupon.discountPercentage / 100)).toLocaleString('en-IN')}</span>
                   </div>
-                  {appliedCoupon && (
-                    <div className="flex justify-between text-green-600">
-                      <span>Discount ({appliedCoupon.discountPercentage}%)</span>
-                      <span>- ₹{discountAmount.toLocaleString('en-IN')}</span>
-                    </div>
-                  )}
-                  <div className="border-t border-gray-100 pt-3 flex justify-between text-gray-900 font-bold text-lg">
-                    <span>Total to Pay</span>
-                    <span className="text-green-600">₹{totalPrice.toLocaleString('en-IN')}</span>
-                  </div>
+                )}
+                <hr className="my-3 border-gray-100" />
+                <div className="flex justify-between items-center text-lg font-bold">
+                  <span>Total to Pay</span>
+                  <span className="text-brand-blue">₹{totalPrice.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
                 </div>
               </div>
 
