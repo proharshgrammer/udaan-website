@@ -218,12 +218,7 @@ export default function Checkout() {
           email: form.email,
           contact: form.phoneNumber,
         },
-        theme: { color: '#0C447C' },
-        modal: {
-          ondismiss: function() {
-            alert('Razorpay modal was closed. If you saw "Something went wrong", the order may have a server-side issue.');
-          }
-        }
+        theme: { color: '#0C447C' }
       };
 
       const rzp = new window.Razorpay(options);
