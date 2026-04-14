@@ -173,16 +173,19 @@ export default function Checkout() {
 
       const data = result.data;
       const orderId = data.orderId || data.id;
+      const orderAmount = data.amount; // Exact paise amount from backend order
       
       if (!orderId) throw new Error('Order creation failed. Please try again.');
 
       // 3. Open Razorpay Checkout
-      // NOTE: Do NOT pass `amount` or `currency` — Razorpay infers them
-      // from the order_id. Passing a mismatched amount causes an instant crash.
+      // amount and currency ARE required for Web SDK (unlike mobile SDK)
+      // Use the exact amount from the backend order to guarantee a match
       if (!window.Razorpay) throw new Error('Payment SDK not loaded. Please reload.');
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: orderAmount,
+        currency: 'INR',
         order_id: orderId,
         name: 'Udaan Vidyapeeth',
         description: `Purchase: ${course.name}`,
