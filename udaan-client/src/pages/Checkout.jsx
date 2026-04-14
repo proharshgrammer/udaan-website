@@ -179,11 +179,11 @@ export default function Checkout() {
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || '',
-        amount: totalPrice * 100,
+        amount: totalPrice * 100, // Amount is in currency subunits.
         currency: 'INR',
         name: 'Udaan Vidyapeeth',
         description: `Purchase: ${course.name}`,
-        order_id: orderId,
+        ...(!appliedCoupon && { order_id: orderId }),
         handler: async function (response) {
           try {
             // Write enrollment directly to Firestore to guarantee immediate access
