@@ -223,6 +223,12 @@ export default function Checkout() {
         theme: { color: '#0C447C' }
       };
 
+      // DEBUG: Alert options so we can identify the crash cause
+      alert("DEBUG - Razorpay Options:\n" + JSON.stringify({
+        ...options,
+        key: "HIDDEN_FOR_SECURITY" // Don't show the secret/key on screen
+      }, null, 2));
+
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', function (res) {
         alert('Payment failed. Please try again.');
