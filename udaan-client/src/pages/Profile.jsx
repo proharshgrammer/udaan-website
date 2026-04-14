@@ -13,12 +13,13 @@ export default function Profile() {
     name: '',
     email: '',
     phoneNumber: '',
-    field: '',
-    state: '',
+    homeState: '',
+    category: '',
+    crlRank: '',
+    homeStateRank: '',
+    categoryRank: '',
     exam: '',
-    interest: '',
     dob: '',
-    rank: ''
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -33,7 +34,6 @@ export default function Profile() {
         if (docSnap.exists()) {
           setProfileData(prev => ({ ...prev, ...docSnap.data() }));
         } else {
-          // If no profile data exists yet, set email from auth
           setProfileData(prev => ({ ...prev, email: currentUser.email || '' }));
         }
       } catch (error) {
@@ -65,6 +65,17 @@ export default function Profile() {
     setSaving(false);
   };
 
+  const INDIAN_STATES = [
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+    'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+    'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+    'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+    'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
+    'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
+  ];
+  const CATEGORIES = ['General', 'OBC', 'SC', 'ST', 'EWS'];
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Helmet>
@@ -74,11 +85,18 @@ export default function Profile() {
 
       <div className="container mx-auto px-4 py-12 flex-1 max-w-3xl">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="bg-brand-blue px-8 py-6">
+          <div className="bg-brand-blue px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-heading font-bold text-white">Student Profile</h1>
               <p className="text-blue-100 mt-1">Manage your personal information and preferences.</p>
             </div>
+            <button 
+              type="button"
+              onClick={() => logout()} 
+              className="bg-white/10 hover:bg-white/20 text-white font-body text-sm font-semibold px-5 py-2.5 rounded-lg border border-white/20 transition self-start sm:self-auto"
+            >
+              Logout
+            </button>
           </div>
           
           <div className="p-8">
@@ -110,7 +128,7 @@ export default function Profile() {
 
                   {/* Phone */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Phone Number</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Phone Number (WhatsApp)</label>
                     <input type="text" name="phoneNumber" value={profileData.phoneNumber || ''} onChange={handleChange} placeholder="+91 9876543210"
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none" />
                   </div>
@@ -122,6 +140,26 @@ export default function Profile() {
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none" />
                   </div>
 
+                  {/* Home State */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Home State</label>
+                    <select name="homeState" value={profileData.homeState || ''} onChange={handleChange}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none appearance-none bg-white">
+                      <option value="">Select State</option>
+                      {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+
+                  {/* Category */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Category</label>
+                    <select name="category" value={profileData.category || ''} onChange={handleChange}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none appearance-none bg-white">
+                      <option value="">Select Category</option>
+                      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+
                   {/* Target Exam */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Target Exam / Field</label>
@@ -129,29 +167,29 @@ export default function Profile() {
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none" />
                   </div>
 
-                  {/* Expected Rank */}
+                  {/* CRL Rank */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Expected Rank / Score</label>
-                    <input type="text" name="rank" value={profileData.rank || ''} onChange={handleChange} placeholder="e.g. 15000"
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">CRL Rank</label>
+                    <input type="text" name="crlRank" value={profileData.crlRank || ''} onChange={handleChange} placeholder="e.g. 15000"
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none" />
                   </div>
-                  
-                  {/* State */}
+
+                  {/* Home State Rank */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">State / Province</label>
-                    <input type="text" name="state" value={profileData.state || ''} onChange={handleChange}
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Home State Rank</label>
+                    <input type="text" name="homeStateRank" value={profileData.homeStateRank || ''} onChange={handleChange} placeholder="Optional"
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none" />
+                  </div>
+
+                  {/* Category Rank */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Category Rank</label>
+                    <input type="text" name="categoryRank" value={profileData.categoryRank || ''} onChange={handleChange} placeholder="Optional"
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none" />
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
-                  <button 
-                    type="button"
-                    onClick={() => logout()} 
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50 font-body text-sm font-semibold px-4 py-2.5 rounded-lg transition"
-                  >
-                    Logout
-                  </button>
+                <div className="pt-6 border-t border-gray-100 flex justify-end">
                   <button type="submit" disabled={saving} className="bg-brand-blue hover:bg-brand-dark text-white px-8 py-2.5 rounded-lg font-heading font-semibold transition disabled:opacity-50">
                     {saving ? 'Saving...' : 'Save Profile'}
                   </button>

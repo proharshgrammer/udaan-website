@@ -93,7 +93,43 @@ export default function LeadForm({ onSuccess, isLight = false }) {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>State*</label>
-          <input type="text" className={`${inputClass} ${errors.state ? 'border-red-500' : ''}`} value={formData.state} onChange={(e) => setFormData({...formData, state: e.target.value})} placeholder="Your State" />
+          <select className={`${inputClass} ${errors.state ? 'border-red-500' : ''} ${!isLight && !formData.state ? 'text-white/60' : ''}`} value={formData.state} onChange={(e) => setFormData({...formData, state: e.target.value})}>
+            <option value="" disabled className="text-gray-900">Select State</option>
+            <option value="Andhra Pradesh" className="text-gray-900">Andhra Pradesh</option>
+            <option value="Arunachal Pradesh" className="text-gray-900">Arunachal Pradesh</option>
+            <option value="Assam" className="text-gray-900">Assam</option>
+            <option value="Bihar" className="text-gray-900">Bihar</option>
+            <option value="Chhattisgarh" className="text-gray-900">Chhattisgarh</option>
+            <option value="Delhi" className="text-gray-900">Delhi</option>
+            <option value="Goa" className="text-gray-900">Goa</option>
+            <option value="Gujarat" className="text-gray-900">Gujarat</option>
+            <option value="Haryana" className="text-gray-900">Haryana</option>
+            <option value="Himachal Pradesh" className="text-gray-900">Himachal Pradesh</option>
+            <option value="Jharkhand" className="text-gray-900">Jharkhand</option>
+            <option value="Karnataka" className="text-gray-900">Karnataka</option>
+            <option value="Kerala" className="text-gray-900">Kerala</option>
+            <option value="Madhya Pradesh" className="text-gray-900">Madhya Pradesh</option>
+            <option value="Maharashtra" className="text-gray-900">Maharashtra</option>
+            <option value="Manipur" className="text-gray-900">Manipur</option>
+            <option value="Meghalaya" className="text-gray-900">Meghalaya</option>
+            <option value="Mizoram" className="text-gray-900">Mizoram</option>
+            <option value="Nagaland" className="text-gray-900">Nagaland</option>
+            <option value="Odisha" className="text-gray-900">Odisha</option>
+            <option value="Punjab" className="text-gray-900">Punjab</option>
+            <option value="Rajasthan" className="text-gray-900">Rajasthan</option>
+            <option value="Sikkim" className="text-gray-900">Sikkim</option>
+            <option value="Tamil Nadu" className="text-gray-900">Tamil Nadu</option>
+            <option value="Telangana" className="text-gray-900">Telangana</option>
+            <option value="Tripura" className="text-gray-900">Tripura</option>
+            <option value="Uttar Pradesh" className="text-gray-900">Uttar Pradesh</option>
+            <option value="Uttarakhand" className="text-gray-900">Uttarakhand</option>
+            <option value="West Bengal" className="text-gray-900">West Bengal</option>
+            <option value="Chandigarh" className="text-gray-900">Chandigarh</option>
+            <option value="Jammu and Kashmir" className="text-gray-900">Jammu and Kashmir</option>
+            <option value="Ladakh" className="text-gray-900">Ladakh</option>
+            <option value="Puducherry" className="text-gray-900">Puducherry</option>
+            <option value="Other" className="text-gray-900">Other</option>
+          </select>
         </div>
         <div>
           <label className={labelClass}>City*</label>

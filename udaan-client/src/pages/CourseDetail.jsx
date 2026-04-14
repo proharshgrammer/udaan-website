@@ -48,80 +48,12 @@ export default function CourseDetail() {
     fetchCourseAndEnrollment();
   }, [id, currentUser]);
 
-  const handlePayment = async () => {
+  const handlePayment = () => {
     if (!currentUser) {
-      alert("Please login to purchase this course.");
       navigate('/login');
       return;
     }
-
-    setProcessing(true);
-    try {
-      // 1. Hit the custom Firebase Cloud Function
-      const token = await currentUser.getIdToken();
-      const response = await fetch('https://createorder-tiwdj3kb2a-uc.a.run.app', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          courseId: course.id,
-          userId: currentUser.uid,
-          amount: course.price
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create order from server.');
-      }
-
-      const data = await response.json();
-      // Assume mapping either raw razorpay order object OR a custom wrapped field.
-      const orderId = data.id || data.orderId || (data.data && data.data.id); 
-
-      if (!orderId) {
-         throw new Error("Invalid orderId returned from server.");
-      }
-
-      // 2. Open Razorpay Checkout
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || '', // Make sure this is in your .env
-        amount: course.price * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-        currency: "INR",
-        name: "Udaan Vidyapeeth",
-        description: `Purchase: ${course.name}`,
-        order_id: orderId,
-        handler: function (response) {
-            // Webhook will usually fulfil the order in backend, but we can redirect the user forward
-            alert("Payment successful! Redirecting to Dashboard.");
-            navigate('/my-courses');
-        },
-        prefill: {
-            name: currentUser.displayName || '',
-            email: currentUser.email || '',
-        },
-        theme: {
-            color: "#0C447C" // Brand Blue
-        }
-      };
-
-      if (!window.Razorpay) {
-         throw new Error("Razorpay SDK not loaded.");
-      }
-
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function (response){
-          alert("Payment Failed: " + response.error.description);
-      });
-      rzp.open();
-
-    } catch (err) {
-      console.error(err);
-      alert("Error initiating payment: " + err.message);
-    } finally {
-      setProcessing(false);
-    }
+    navigate(`/checkout/${course.id}`);
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="w-8 h-8 rounded-full border-4 border-brand-blue border-t-transparent animate-spin"></div></div>;
