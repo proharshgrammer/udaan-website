@@ -166,6 +166,8 @@ export default function Checkout() {
         userId: currentUser.uid,
         amount: Math.round(totalPrice), // Ensure it's passed as an integer
         couponCode: appliedCoupon?.code || null,
+        discountCode: appliedCoupon?.code || null,
+        promoCode: appliedCoupon?.code || null,
       });
 
       const data = result.data;
