@@ -177,6 +177,8 @@ export default function Checkout() {
 
       const data = result.data;
       const orderId = data.id || data.orderId || (data.data && data.data.id);
+      const exactBackendAmount = data.amount || (data.data && data.data.amount) || Math.round(totalPrice * 100);
+      
       if (!orderId) throw new Error('Invalid order response parameters.');
 
       // 3. Open Razorpay Checkout
@@ -184,7 +186,7 @@ export default function Checkout() {
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || '',
-        amount: totalPrice * 100, // Amount is in currency subunits.
+        amount: exactBackendAmount, // Must be strict integer or Razorpay UI crashes
         currency: 'INR',
         name: 'Udaan Vidyapeeth',
         description: `Purchase: ${course.name}`,
