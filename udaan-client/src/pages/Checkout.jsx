@@ -130,7 +130,10 @@ export default function Checkout() {
   // Compute final price
   const coursePrice = course?.price || 0;
   const discountAmount = appliedCoupon ? Math.round(coursePrice * (appliedCoupon.discountPercentage / 100)) : 0;
-  const totalPrice = Math.max(0, coursePrice - discountAmount);
+  const calculatedPrice = coursePrice - discountAmount;
+  // Razorpay requires a minimum amount of 1 INR. 
+  // If a 100% coupon is applied, default to charging ₹1 (like the mobile app does).
+  const totalPrice = calculatedPrice <= 0 ? 1 : calculatedPrice;
 
   // Validate required fields
   const isFormValid = form.name.trim() && form.email.trim() && form.phoneNumber.trim() && form.homeState && form.crlRank.trim();
