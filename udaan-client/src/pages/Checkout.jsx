@@ -215,12 +215,30 @@ export default function Checkout() {
           email: form.email,
           contact: form.phoneNumber,
         },
-        theme: { color: '#0C447C' }
+        theme: { color: '#0C447C' },
+        modal: {
+          ondismiss: function() {
+            alert('Razorpay modal was closed. If you saw "Something went wrong", the order may have a server-side issue.');
+          }
+        }
       };
 
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', function (res) {
-        alert('Payment failed. Please try again.');
+        const err = res.error || {};
+        alert(
+          `Payment Failed\n` +
+          `Reason: ${err.reason || 'Unknown'}\n` +
+          `Description: ${err.description || 'No details'}\n` +
+          `Code: ${err.code || 'N/A'}\n` +
+          `Source: ${err.source || 'N/A'}\n` +
+          `Step: ${err.step || 'N/A'}\n` +
+          `Order ID: ${err.metadata?.order_id || orderId}\n` +
+          `Payment ID: ${err.metadata?.payment_id || 'N/A'}`
+        );
+      });
+      rzp.on('payment.error', function(res) {
+        console.error('Razorpay payment error:', res);
       });
       rzp.open();
 
