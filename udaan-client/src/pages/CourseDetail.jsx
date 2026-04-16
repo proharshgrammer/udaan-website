@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -224,9 +224,9 @@ export default function CourseDetail() {
             </h2>
             <div className="divide-y divide-gray-100">
                {[
-                  { q: "When are the classes held?", a: "Classes are held daily as per the schedule provided post enrollment in the batch." },
-                  { q: "Will I get recordings of the live classes?", a: "Yes, all live classes are recorded and made available in the app within 24 hours of completion." },
-                  { q: "Is there any refund policy?", a: "No, purchases are final unless specified in our terms of service." }
+                  { q: "Will I get a personalized choice-filling list?", a: "Yes. Unlike generic PDF lists, our experts (Hritik & Abhishek Sir) provide data-driven preference orders tailored to your rank, home state, and career goals to ensure you don't miss out on a better college due to a filling error." },
+                  { q: "Does one batch cover all counsellings?", a: "We offer specific batches for different tracks (e.g., \"All UP Counselling\" vs. \"JoSAA/CSAB\"). Please ensure you enrol in the batch that matches the entrance exam you appeared for." },
+                  { q: "What happens after I buy the course?", a: "Immediately after payment, you will be allotted a mentor within 12 hours. You will be added to our Premium WhatsApp Group and receive the schedule for the upcoming counselling you chose. Your mentor will reach out to you by call or WhatsApp, so please provide the correct mobile number when buying the course." }
                ].map((faq, i) => (
                   <details key={i} className="group p-6 sm:px-10 hover:bg-gray-50 transition cursor-pointer text-gray-900">
                      <summary className="font-bold text-[17px] list-none flex justify-between items-center outline-none select-none">

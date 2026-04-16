@@ -14,10 +14,10 @@ import { orderBy, limit } from 'firebase/firestore';
 import { COLLECTIONS } from '../config/collections';
 
 const testimonials = [
-  { name: "Yashvender Singh", exam: "JEE Main", rank: "AIR 89,420", college: "NIT Trichy — CSE", quote: "Ritik sir helped me understand exactly which round to lock in. Couldn't have made this decision alone.", avatar: "AS" },
-  { name: "Vanshika Adran", exam: "JEE Main", rank: "AIR 1,24,000", college: "NIT Agartala — ECE", quote: "I was completely lost after results. One session with Udaan and I had a clear college list ready.", avatar: "PV" },
-  { name: "Kartik Yadav", exam: "AKTU", rank: "State Rank 1,240", college: "HBTU Kanpur — ECE", quote: "Abhishek sir's breakdown of the AKTU seat matrix was the clearest explanation I've seen anywhere.", avatar: "RG" },
-  { name: "Ananya Patel", exam: "MHT-CET", rank: "Percentile 97.8", college: "COEP Pune — Mechanical", quote: "The choice filling session was worth every rupee. Got my first preference college.", avatar: "SP" }
+  { name: "Arnav Deshmukh", exam: "JEE Main", rank: "AIR 1,385", college: "NIT Trichy — Computer Science & Engineering", quote: "I was confused between NIT Trichy and IIIT Hyderabad. Ritik sir's deep dive into the placement data and the 'Home State' advantage analysis made the choice clear. Securely locked my seat in Round 1!", avatar: "AD" },
+  { name: "Priyanshu Gupta", exam: "JEE Main", rank: "AIR 18,420", college: "IET Lucknow — CSE (AI & ML)", quote: "With my rank, I was almost sure I'd have to go to a private college. Abhishek sir's AKTU choice-filling strategy was a game-changer. Getting into the top government college of UP is a dream come true.", avatar: "PG" },
+  { name: "Sameer Khan", exam: "JEE Main", rank: "AIR 1,12,400", college: "NIT Mizoram — Civil Engineering", quote: "I had lost all hope of becoming an NITian after JoSAA Round 6. Udaan Vidyapeeth's CSAB Special Round strategy helped me grab a vacant seat in the final round. Don't give up until the end!", avatar: "SK" },
+  { name: "Neha Kulkarni", exam: "MHT-CET", rank: "98.6 %ile", college: "VJTI Mumbai — Electrical Engineering", quote: "VJTI has a very tricky seat matrix. The breakdown provided by the Udaan team helped me navigate the CAP rounds perfectly. Their preference list got me my first choice in Round 2.", avatar: "NK" }
 ];
 
 import BannerCarousel from '../components/BannerCarousel';
