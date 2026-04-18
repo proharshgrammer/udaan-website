@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -7,7 +7,8 @@ import LeadPopup from '../components/LeadPopup';
 import StickyBar from '../components/StickyBar';
 import WhatsAppFAB from '../components/WhatsAppFAB';
 import { useCollection } from '../hooks/useFirestore';
-import { orderBy, where } from 'firebase/firestore';
+import { collection, query, orderBy, where, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
 import { COLLECTIONS } from '../config/collections';
 
 // Extract YouTube video ID from various URL formats
@@ -63,8 +64,28 @@ function YouTubeEmbed({ url, title }) {
 
 export default function Blog() {
   const { data: blogs, loading } = useCollection('blogs', [where('published', '==', true), orderBy('date', 'desc')]);
-  const { data: featuredVideos, loading: videosLoading } = useCollection(COLLECTIONS.FEATURED_VIDEOS, [orderBy('order', 'asc')]);
+  const [featuredVideos, setFeaturedVideos] = useState([]);
+  const [videosLoading, setVideosLoading] = useState(true);
   const [filter, setFilter] = useState('All');
+
+  // Fetch featured videos directly (avoids useCollection constraint serialization issues)
+  useEffect(() => {
+    const q = query(
+      collection(db, COLLECTIONS.FEATURED_VIDEOS),
+      orderBy('order', 'asc')
+    );
+    const unsub = onSnapshot(q,
+      (snap) => {
+        setFeaturedVideos(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+        setVideosLoading(false);
+      },
+      (err) => {
+        console.error('Error fetching featured videos:', err);
+        setVideosLoading(false);
+      }
+    );
+    return unsub;
+  }, []);
 
   const exams = ['All', 'JEE', 'NEET', 'CUET', 'AKTU', 'MHT-CET', 'IPU'];
   
