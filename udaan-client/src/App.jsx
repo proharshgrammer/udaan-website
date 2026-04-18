@@ -18,6 +18,7 @@ const Profile = lazy(() => import('./pages/Profile'))
 const MyCourses = lazy(() => import('./pages/MyCourses'))
 const ChatRoom = lazy(() => import('./pages/ChatRoom'))
 const Checkout = lazy(() => import('./pages/Checkout'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
               <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
               <Route path="/chat/:courseId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
               <Route path="/checkout/:courseId" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </Router>
