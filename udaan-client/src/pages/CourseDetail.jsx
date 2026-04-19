@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -8,6 +8,9 @@ import { useCollection } from '../hooks/useFirestore';
 import MentorCard from '../components/MentorCard';
 import { useAuth } from '../contexts/AuthContext';
 import EnrolledCourseView from './EnrolledCourseView';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 export default function CourseDetail() {
   const { id } = useParams();
@@ -126,50 +129,50 @@ export default function CourseDetail() {
             {/* Main Content Column */}
             <div className="lg:col-span-2 space-y-8">
                
-               {/* About the Batch */}
-               {course.aboutBatch && (
-                  <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 sm:p-10">
+               {/* About Course / Details */}
+               {(course.aboutBatch || course.about || (course.moreDetails && course.moreDetails !== '<p><br></p>')) && (
+                  <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 sm:p-10 mb-8">
                      <h2 className="font-heading font-bold text-2xl text-gray-900 mb-6 flex items-center gap-3">
                         <span className="w-1.5 h-6 bg-[#E5C77A] rounded-full block"></span>
-                        About the Batch
+                        About Course
                      </h2>
-                     <ul className="space-y-4">
-                        {course.aboutBatch.split('\n').filter(line => line.trim() !== '').map((line, idx) => (
-                           <li key={idx} className="flex items-start gap-4 text-gray-700 leading-relaxed font-medium">
-                              <span className="mt-1.5 shrink-0 w-2 h-2 rounded-full bg-brand-blue opacity-80 shadow-sm"></span>
-                              <span>{line}</span>
-                           </li>
-                        ))}
-                     </ul>
+                     
+                     {course.about && (
+                        <div className="prose prose-blue max-w-none text-gray-700 font-medium mb-6">
+                           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                              {course.about}
+                           </ReactMarkdown>
+                        </div>
+                     )}
+                     
+                     {course.aboutBatch && (
+                        <div className="prose prose-blue max-w-none text-gray-700 font-medium mb-8">
+                           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                              {course.aboutBatch}
+                           </ReactMarkdown>
+                        </div>
+                     )}
+                     
+                     {course.moreDetails && course.moreDetails !== '<p><br></p>' && (
+                        <div className="prose prose-blue max-w-none text-gray-700 prose-headings:font-heading prose-headings:font-bold prose-headings:text-gray-900 prose-p:leading-relaxed prose-li:marker:text-brand-blue font-medium" dangerouslySetInnerHTML={{ __html: course.moreDetails }} />
+                     )}
                   </section>
                )}
 
-               {/* Teachers */}
+               {/* Mentors */}
                {mentors && mentors.length > 0 && (
                   <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 sm:p-10 overflow-hidden">
                      <h2 className="font-heading font-bold text-2xl text-gray-900 mb-8 flex items-center gap-3">
                         <span className="w-1.5 h-6 bg-[#E5C77A] rounded-full block"></span>
-                        Know your Teachers
+                        Know your Mentors
                      </h2>
-                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">
+                     <div className="flex flex-col gap-4">
                         {mentors.map(mentor => (
                            <MentorCard key={mentor.id} mentor={mentor} />
                         ))}
                      </div>
                   </section>
                )}
-
-               {/* More Details (Wordpad Content) */}
-               {course.moreDetails && course.moreDetails !== '<p><br></p>' && (
-                  <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 sm:p-10">
-                     <h2 className="font-heading font-bold text-2xl text-gray-900 mb-6 flex items-center gap-3 border-b border-gray-100 pb-4">
-                        <span className="w-1.5 h-6 bg-[#E5C77A] rounded-full block"></span>
-                        More Details
-                     </h2>
-                     <div className="prose prose-blue max-w-none text-gray-700 prose-headings:font-heading prose-headings:font-bold prose-headings:text-gray-900 prose-p:leading-relaxed prose-li:marker:text-brand-blue font-medium" dangerouslySetInnerHTML={{ __html: course.moreDetails }} />
-                  </section>
-               )}
-
             </div>
 
             {/* Sticky Sidebar */}

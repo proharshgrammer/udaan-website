@@ -36,7 +36,7 @@ export default function TermsOfUse() {
 
             <div>
               <h2 className="font-heading font-semibold text-xl mb-3 text-gray-900">4. Refunds and Cancellations</h2>
-              <p>Refunds are subject to our specific course refund policies outlined at the time of purchase. Generally, if you are unsatisfied with a course, you may request a refund within a specified window (e.g., 7 days from purchase), provided you have not consumed a significant portion of the course content. We reserve the right to decline refund requests that violate our policy guidelines or show signs of abuse.</p>
+              <p>Refunds are subject to our specific course refund policies outlined at the time of purchase. Generally, if you are unsatisfied with a course, you may request a refund within a specified window (within 12 hours of purchase), provided you have not consumed a significant portion of the course content. We reserve the right to decline refund requests that violate our policy guidelines or show signs of abuse.</p>
             </div>
 
             <div>

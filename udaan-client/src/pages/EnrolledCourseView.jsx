@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import { COLLECTIONS } from '../config/collections';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 export default function EnrolledCourseView({ course, enrollmentDetails }) {
   const [activeTab, setActiveTab] = useState('Overview');
@@ -85,7 +88,11 @@ function OverviewTab({ course, enrollmentDetails, navigate }) {
         {/* About Section */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
            <h2 className="font-heading font-bold text-xl text-gray-900 mb-4">About This Course</h2>
-           <div className="prose prose-blue max-w-none text-gray-700 font-medium" dangerouslySetInnerHTML={{ __html: course.about }} />
+           <div className="prose prose-blue max-w-none text-gray-700 font-medium">
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                 {course.about}
+              </ReactMarkdown>
+           </div>
            {course.moreDetails && course.moreDetails !== '<p><br></p>' && (
              <div className="prose prose-blue max-w-none text-gray-700 font-medium mt-4 pt-4 border-t border-gray-100" dangerouslySetInnerHTML={{ __html: course.moreDetails }} />
            )}
