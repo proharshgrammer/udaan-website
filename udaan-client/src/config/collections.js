@@ -1,7 +1,6 @@
-// TODO: Replace these values with the exact collection names used in your App's Firestore database.
 export const COLLECTIONS = {
   COURSES: 'courses',
-  ANNOUNCEMENTS: 'announcements',
+  ANNOUNCEMENTS: 'announcements', //News
   USERS: 'users',
   MENTORS: 'mentors', // Equivalent to "team"
   BANNERS: 'banners',

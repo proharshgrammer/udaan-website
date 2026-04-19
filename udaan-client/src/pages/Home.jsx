@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import MentorTeaser from '../components/MentorTeaser';
 import CourseCard from '../components/CourseCard';
+import HomeNewsCarousel from '../components/HomeNewsCarousel';
 import LeadForm from '../components/LeadForm';
 import LeadPopup from '../components/LeadPopup';
 import StickyBar from '../components/StickyBar';
@@ -80,18 +81,19 @@ export default function Home() {
       </section>
 
       {/* Mentor Teaser */}
-      <section className="bg-gray-50 py-20 px-6">
+      <section className="bg-gray-50 pt-16 pb-12 px-6">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="font-heading font-bold text-3xl md:text-4xl">Guided by experts who care.</h2>
             <p className="font-body text-gray-600 mt-4 max-w-2xl mx-auto">Meet the counsellors behind 6000+ successful college admissions.</p>
           </div>
           <MentorTeaser mentors={mentors} />
+          <HomeNewsCarousel />
         </div>
       </section>
 
       {/* Course Preview */}
-      <section className="bg-white py-24 px-6">
+      <section className="bg-white py-12 px-6">
         <div className="container mx-auto max-w-6xl">
           <div className="flex justify-between items-end mb-12">
             <div>

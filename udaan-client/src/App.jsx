@@ -3,6 +3,7 @@ import { Suspense, lazy } from 'react'
 import { HelmetProvider } from 'react-helmet-async'
 import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import ScrollToTop from './components/ScrollToTop'
 
 const Home = lazy(() => import('./pages/Home'))
 const Courses = lazy(() => import('./pages/Courses'))
@@ -25,6 +26,7 @@ function App() {
     <HelmetProvider>
       <AuthProvider>
         <Router>
+          <ScrollToTop />
           <Suspense fallback={
             <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4">
               <img src="/logo-light.png" alt="Udaan Vidyapeeth" className="h-10 object-contain opacity-60" />
