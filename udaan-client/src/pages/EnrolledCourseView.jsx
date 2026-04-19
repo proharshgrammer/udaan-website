@@ -57,8 +57,10 @@ function OverviewTab({ course, enrollmentDetails, navigate }) {
         
         {/* Banner Area */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-           {course.thumbnailUrl ? (
-             <img src={course.thumbnailUrl} alt={course.name} className="w-full h-48 md:h-64 object-cover" />
+           {(course.thumbnail || course.thumbnailUrl) ? (
+             <div className="w-full h-48 md:h-64 bg-gray-50 flex items-center justify-center p-4 border-b border-gray-100/60">
+               <img src={course.thumbnail || course.thumbnailUrl} alt={course.name} className="max-w-full max-h-full object-contain mix-blend-multiply rounded-lg" />
+             </div>
            ) : (
              <div className="w-full h-48 md:h-64 bg-gradient-to-br from-brand-light to-brand-blue flex items-center justify-center p-8 text-center text-white font-heading font-bold text-2xl">
                 {course.name}

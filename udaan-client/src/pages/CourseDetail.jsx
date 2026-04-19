@@ -113,11 +113,11 @@ export default function CourseDetail() {
                </div>
             </div>
             {/* Right Banner Image */}
-            <div className="w-full md:w-[45%] shrink-0 bg-gray-100 relative min-h-[250px] md:min-h-full">
+            <div className="w-full md:w-[45%] shrink-0 bg-gray-50 relative min-h-[250px] md:min-h-full flex items-center justify-center p-4 sm:p-6 lg:p-8 border-t md:border-t-0 md:border-l border-gray-100">
                {(course.thumbnail || course.thumbnailUrl) ? (
-                  <img src={course.thumbnail || course.thumbnailUrl} alt={course.name} className="absolute inset-0 w-full h-full object-cover" />
+                  <img src={course.thumbnail || course.thumbnailUrl} alt={course.name} className="w-full h-full object-contain rounded-xl mix-blend-multiply" />
                ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-brand-light to-brand-blue flex items-center justify-center p-8 text-center text-white font-heading font-bold text-3xl">
+                  <div className="w-full h-full bg-gradient-to-br from-brand-light to-brand-blue flex items-center justify-center p-8 text-center text-white font-heading font-bold text-3xl rounded-xl">
                      {course.name}
                   </div>
                )}
