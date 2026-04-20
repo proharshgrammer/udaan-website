@@ -32,6 +32,22 @@ export default function Home() {
       <Helmet>
         <title>Udaan Vidyapeeth — College Counselling for JEE, NEET, CUET & More</title>
         <meta name="description" content="Expert college counselling for JEE, NEET, CUET, AKTU, MHT-CET, IPU. 6000+ students guided. Book a free call today." />
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "EducationalOrganization",
+              "name": "Udaan Vidyapeeth",
+              "url": "https://www.udaanvidyapeeth.com/",
+              "logo": "https://www.udaanvidyapeeth.com/logo-dark.png",
+              "description": "Expert college counselling for JEE, NEET, CUET, AKTU, MHT-CET, IPU. 6000+ students guided.",
+              "sameAs": [
+                "https://www.instagram.com/udaanvidyapeeth",
+                "https://www.youtube.com/@udaanvidyapeeth"
+              ]
+            }
+          `}
+        </script>
       </Helmet>
       
       <Navbar />

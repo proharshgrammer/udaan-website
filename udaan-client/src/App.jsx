@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Suspense, lazy } from 'react'
-import { HelmetProvider } from 'react-helmet-async'
+import { HelmetProvider, Helmet } from 'react-helmet-async'
 import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import ScrollToTop from './components/ScrollToTop'
@@ -25,6 +25,10 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 function App() {
   return (
     <HelmetProvider>
+      <Helmet>
+        <title>Udaan Vidyapeeth | College Predictor & Counselling</title>
+        <meta name="description" content="Udaan Vidyapeeth is India’s premier college predictor and counselling platform for JOSAA, CSAB, and AKTU." />
+      </Helmet>
       <AuthProvider>
         <Router>
           <ScrollToTop />
