@@ -6,24 +6,53 @@ import toast from 'react-hot-toast';
 import RichEditor from '../components/RichEditor';
 import MediaUploader from '../components/MediaUploader';
 
+function generateSlug(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 80);
+}
+
+const EMPTY_POST = {
+  title: '', body: '', exams: [], published: false,
+  thumbnail: '', readTime: 5, slug: '', metaDescription: ''
+};
+
 export default function Blog() {
   const { data: blogs, loading } = useCollection('blogs', [orderBy('date', 'desc')]);
   const [isEditing, setIsEditing] = useState(false);
-  const [current, setCurrent] = useState({ title: '', body: '', exams: [], published: false, thumbnail: '', readTime: 5 });
+  const [current, setCurrent] = useState({ ...EMPTY_POST });
+
+  const handleTitleChange = (title) => {
+    const updates = { title };
+    // Auto-generate slug only if slug is empty or was auto-generated from old title
+    if (!current.slug || current.slug === generateSlug(current.title)) {
+      updates.slug = generateSlug(title);
+    }
+    setCurrent(prev => ({ ...prev, ...updates }));
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
     if (!current.body) return toast.error('Body content is required');
+    if (!current.slug) return toast.error('URL slug is required');
     try {
+      const payload = { ...current };
+      // Ensure slug is clean
+      payload.slug = generateSlug(payload.slug || payload.title);
+
       if (current.id) {
-        await updateDoc(doc(db, 'blogs', current.id), { ...current });
+        await updateDoc(doc(db, 'blogs', current.id), payload);
         toast.success('Blog updated');
       } else {
-        await addDoc(collection(db, 'blogs'), { ...current, date: serverTimestamp() });
+        await addDoc(collection(db, 'blogs'), { ...payload, date: serverTimestamp() });
         toast.success('Blog created');
       }
       setIsEditing(false);
-      setCurrent({ title: '', body: '', exams: [], published: false, thumbnail: '', readTime: 5 });
+      setCurrent({ ...EMPTY_POST });
     } catch (err) {
       toast.error('Failed to save');
       console.error(err);
@@ -38,6 +67,16 @@ export default function Blog() {
     } catch (err) {
       toast.error('Failed to delete');
     }
+  };
+
+  const handleEdit = (blog) => {
+    setCurrent({
+      ...EMPTY_POST,
+      ...blog,
+      slug: blog.slug || generateSlug(blog.title || ''),
+      metaDescription: blog.metaDescription || '',
+    });
+    setIsEditing(true);
   };
 
   return (
@@ -70,7 +109,20 @@ export default function Blog() {
             <div className="lg:col-span-2 space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                <input type="text" required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue/50 outline-none text-lg font-medium transition" placeholder="Catchy title..." value={current.title} onChange={e => setCurrent({...current, title: e.target.value})} />
+                <input type="text" required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue/50 outline-none text-lg font-medium transition" placeholder="Catchy title..." value={current.title} onChange={e => handleTitleChange(e.target.value)} />
+                {/* Slug preview */}
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="text-xs text-gray-400 font-medium shrink-0">URL:</span>
+                  <span className="text-xs text-brand-blue font-mono bg-blue-50 px-2 py-1 rounded truncate">
+                    /blog/{current.slug || '...'}
+                  </span>
+                </div>
+              </div>
+              {/* Editable slug */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">URL Slug</label>
+                <input type="text" required className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue/50 outline-none text-sm font-mono transition" placeholder="my-blog-post-title" value={current.slug} onChange={e => setCurrent({...current, slug: e.target.value.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')})} />
+                <p className="text-xs text-gray-400 mt-1">Auto-generated from title. Edit for a custom URL.</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
@@ -94,6 +146,22 @@ export default function Blog() {
                 <input type="url" placeholder="Or enter image URL..." className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md mt-3 outline-none focus:border-brand-blue" value={current.thumbnail} onChange={e => setCurrent({...current, thumbnail: e.target.value})} />
               </div>
 
+              {/* Meta Description for SEO */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Meta Description <span className="text-gray-400 font-normal">(SEO)</span>
+                </label>
+                <textarea 
+                  rows="3" 
+                  maxLength={160}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-md outline-none focus:border-brand-blue transition resize-none" 
+                  value={current.metaDescription} 
+                  onChange={e => setCurrent({...current, metaDescription: e.target.value})} 
+                  placeholder="A brief summary for Google search results (max 160 chars)..."
+                />
+                <p className="text-xs text-gray-400 mt-1">{current.metaDescription.length}/160 characters</p>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Target Exams</label>
                 <input type="text" className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-md outline-none focus:border-brand-blue transition" value={current.exams.join(', ')} onChange={e => setCurrent({...current, exams: e.target.value.split(',').map(s => s.trim()).filter(Boolean)})} placeholder="e.g. JEE, NEET" />
@@ -107,7 +175,7 @@ export default function Blog() {
 
               <div className="pt-6 border-t border-gray-200 space-y-3">
                 <button type="submit" form="blog-form" className="w-full bg-brand-blue text-white px-5 py-3 rounded-lg font-medium hover:bg-brand-dark transition shadow-sm">Save Post</button>
-                <button type="button" onClick={() => { setIsEditing(false); setCurrent({ title: '', body: '', exams: [], published: false, thumbnail: '', readTime: 5 }); }} className="w-full bg-white border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition">Cancel</button>
+                <button type="button" onClick={() => { setIsEditing(false); setCurrent({ ...EMPTY_POST }); }} className="w-full bg-white border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition">Cancel</button>
               </div>
             </div>
           </form>
@@ -139,9 +207,10 @@ export default function Blog() {
                      </td>
                      <td className="px-6 py-4">
                         <div className="font-semibold text-[15px] text-gray-900 mb-1 group-hover:text-brand-blue transition">{b.title}</div>
-                        <div className="flex gap-1.5 flex-wrap">
+                        <div className="flex gap-1.5 flex-wrap items-center">
                            {b.exams?.map((e, idx) => <span key={idx} className="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider">{e}</span>)}
-                           {(!b.exams || b.exams.length === 0) && <span className="text-gray-400 text-xs italic">No tags</span>}
+                           {b.slug && <span className="text-gray-400 text-[10px] font-mono">/{b.slug}</span>}
+                           {(!b.exams || b.exams.length === 0) && !b.slug && <span className="text-gray-400 text-xs italic">No tags</span>}
                         </div>
                      </td>
                      <td className="px-6 py-4">
@@ -155,7 +224,7 @@ export default function Blog() {
                        {b.date?.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                      </td>
                      <td className="px-6 py-4 text-right space-x-4">
-                       <button onClick={() => { setCurrent(b); setIsEditing(true); }} className="text-brand-blue font-medium hover:text-brand-dark">Edit</button>
+                       <button onClick={() => handleEdit(b)} className="text-brand-blue font-medium hover:text-brand-dark">Edit</button>
                        <button onClick={() => handleDelete(b.id)} className="text-red-500 font-medium hover:text-red-700">Delete</button>
                      </td>
                    </tr>

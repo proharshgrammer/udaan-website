@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import VantaBackground from '../components/VantaBackground';
@@ -139,7 +140,7 @@ export default function Blog() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredBlogs.map(b => (
-                <article key={b.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition flex flex-col group cursor-pointer">
+                <Link key={b.id} to={`/blog/${b.slug || b.id}`} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition flex flex-col group" aria-label={`Read: ${b.title}`}>
                   {b.thumbnail ? (
                     <img src={b.thumbnail} alt={b.title} className="w-full h-48 object-cover group-hover:scale-105 transition duration-500" />
                   ) : (
@@ -159,7 +160,7 @@ export default function Blog() {
                       <span>{b.readTime || 5} min read</span>
                     </div>
                   </div>
-                </article>
+                </Link>
               ))}
               {filteredBlogs.length === 0 && (
                 <div className="col-span-full text-center py-20 text-gray-500 bg-white rounded-2xl border border-gray-100 shadow-sm">
