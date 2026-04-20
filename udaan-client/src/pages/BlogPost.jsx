@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, orderBy, limit } from 'firebase/firestore';
 import { db } from '../firebase';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -22,26 +22,27 @@ export default function BlogPost() {
   useEffect(() => {
     async function fetchPost() {
       try {
-        // Try slug-based lookup first
+        // Try slug-based lookup first (single-field query, no composite index needed)
         let q = query(
           collection(db, 'blogs'),
           where('slug', '==', slug),
-          where('published', '==', true),
           limit(1)
         );
         let snap = await getDocs(q);
 
-        // Fallback: try ID-based lookup for old posts without slugs
-        if (snap.empty) {
-          const { doc, getDoc } = await import('firebase/firestore');
+        if (!snap.empty) {
+          const docData = snap.docs[0];
+          const data = docData.data();
+          if (data.published) {
+            setPost({ id: docData.id, ...data });
+          }
+        } else {
+          // Fallback: try ID-based lookup for old posts without slugs
           const docRef = doc(db, 'blogs', slug);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists() && docSnap.data().published) {
             setPost({ id: docSnap.id, ...docSnap.data() });
           }
-        } else {
-          const docData = snap.docs[0];
-          setPost({ id: docData.id, ...docData.data() });
         }
       } catch (err) {
         console.error('Error fetching blog post:', err);
@@ -60,14 +61,13 @@ export default function BlogPost() {
       try {
         const q = query(
           collection(db, 'blogs'),
-          where('published', '==', true),
           orderBy('date', 'desc'),
-          limit(10)
+          limit(20)
         );
         const snap = await getDocs(q);
         const all = snap.docs
           .map(d => ({ id: d.id, ...d.data() }))
-          .filter(b => b.id !== post.id && b.exams?.some(e => post.exams.includes(e)));
+          .filter(b => b.published && b.id !== post.id && b.exams?.some(e => post.exams.includes(e)));
         setRelatedPosts(all.slice(0, 3));
       } catch (err) {
         console.error('Error fetching related posts:', err);

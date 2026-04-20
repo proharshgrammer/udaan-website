@@ -8,7 +8,7 @@ import LeadPopup from '../components/LeadPopup';
 import StickyBar from '../components/StickyBar';
 import WhatsAppFAB from '../components/WhatsAppFAB';
 import { useCollection } from '../hooks/useFirestore';
-import { collection, query, orderBy, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 import { COLLECTIONS } from '../config/collections';
 
@@ -64,7 +64,8 @@ function YouTubeEmbed({ url, title }) {
 }
 
 export default function Blog() {
-  const { data: blogs, loading } = useCollection('blogs', [where('published', '==', true), orderBy('date', 'desc')]);
+  const { data: allBlogs, loading } = useCollection('blogs', [orderBy('date', 'desc')]);
+  const blogs = allBlogs.filter(b => b.published);
   const [featuredVideos, setFeaturedVideos] = useState([]);
   const [videosLoading, setVideosLoading] = useState(true);
   const [filter, setFilter] = useState('All');
