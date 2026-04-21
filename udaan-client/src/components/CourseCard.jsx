@@ -22,7 +22,7 @@ export default function CourseCard({ course, isEnrolled }) {
       {/* Banner / Header Image Area */}
       <div className="relative aspect-[16/9] w-full bg-gray-100 overflow-hidden">
         {courseImage ? (
-           <img src={courseImage} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+           <img src={courseImage} alt={name} className="w-full h-full object-contain bg-gray-100 group-hover:scale-105 transition duration-500" />
         ) : (
            <div className="w-full h-full bg-gradient-to-br from-brand-light to-blue-50 flex items-center justify-center">
              <span className="text-brand-blue font-heading font-bold text-xl opacity-30">{name}</span>
