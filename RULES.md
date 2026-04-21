@@ -66,9 +66,7 @@ async function submitLead(formData) {
     read: false
   });
   // 2. WhatsApp notification (opens in new tab)
-  const msg = encodeURIComponent(
-    `New Udaan lead:\nName: ${formData.name}\nPhone: ${formData.phone}\nExam: ${formData.exam}\nRank: ${formData.rank}\nCity: ${formData.city}`
-  );
+  const msg = encodeURIComponent('Hi! I want Counselling advice.');
   window.open(`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${msg}`, '_blank');
   // 3. Dismiss lead capture
   sessionStorage.setItem('udaan_lead_dismissed', 'true');

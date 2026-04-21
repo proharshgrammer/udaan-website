@@ -53,7 +53,7 @@ After getting their JEE / NEET / CUET / state exam rank, Indian students (17–2
 
 ### On submit
 1. Write to Firestore `/leads` collection
-2. Open `wa.me/{ADMIN_NUMBER}?text=New lead: {name}, {phone}, {exam}, Rank: {rank}, {city}` in new tab
+2. Open `wa.me/{ADMIN_NUMBER}?text=Hi! I want Counselling advice.` in new tab
 
 ## Mentor profiles — Concept B (editorial horizontal cards)
 Both co-founders appear on:

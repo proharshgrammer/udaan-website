@@ -45,9 +45,7 @@ export default function LeadForm({ onSuccess, isLight = false }) {
         read: false
       });
       
-      const msg = encodeURIComponent(
-        `New Udaan lead:\nName: ${formData.name}\nPhone: ${formData.phone}\nExam: ${finalExam}\nRank: ${formData.rank}\nState: ${formData.state}\nCity: ${formData.city}`
-      );
+      const msg = encodeURIComponent('Hi! I want Counselling advice.');
       const waUrl = `https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${msg}`;
       
       if (fallbackWindow) {
