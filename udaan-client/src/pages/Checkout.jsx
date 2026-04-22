@@ -206,6 +206,29 @@ export default function Checkout() {
               couponApplied: appliedCoupon?.code || null
             }, { merge: true });
             
+            // Send data to Google Sheets (Non-blocking background task)
+            fetch('https://script.google.com/macros/s/AKfycbx9_PHUkUSyceAOgOgmz5JtgBoHjPuUniGREGuH3bSxfUkagWd1aMnUoqWqPDWtyzgC/exec', {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: {
+                'Content-Type': 'text/plain',
+              },
+              body: JSON.stringify({
+                courseName: course.name,
+                name: form.name,
+                email: form.email,
+                phoneNumber: form.phoneNumber,
+                homeState: form.homeState,
+                category: form.category,
+                crlRank: form.crlRank,
+                homeStateRank: form.homeStateRank,
+                categoryRank: form.categoryRank,
+                pricePaid: totalPrice,
+                paymentId: response.razorpay_payment_id || 'manual',
+                orderId: response.razorpay_order_id || 'manual'
+              })
+            }).catch(e => console.error("Google Sheets sync error: ", e));
+
             navigate('/my-courses');
           } catch (err) {
             console.error("Enrollment error: ", err);
