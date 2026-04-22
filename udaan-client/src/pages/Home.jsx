@@ -16,7 +16,7 @@ import { COLLECTIONS } from '../config/collections';
 
 const testimonials = [
   { name: "Arnav Deshmukh", exam: "JEE Main", rank: "AIR 1,385", college: "NIT Trichy — Computer Science & Engineering", quote: "I was confused between NIT Trichy and IIIT Hyderabad. Ritik sir's deep dive into the placement data and the 'Home State' advantage analysis made the choice clear. Securely locked my seat in Round 1!", avatar: "AD" },
-  { name: "Priyanshu Gupta", exam: "JEE Main", rank: "AIR 18,420", college: "IET Lucknow — CSE (AI & ML)", quote: "With my rank, I was almost sure I'd have to go to a private college. Abhishek sir's AKTU choice-filling strategy was a game-changer. Getting into the top government college of UP is a dream come true.", avatar: "PG" },
+  { name: "Priyanshu Gupta", exam: "JEE Main", rank: "AIR 46,420", college: "IET Lucknow — CSE (AI & ML)", quote: "With my rank, I was almost sure I'd have to go to a private college. Abhishek sir's AKTU choice-filling strategy was a game-changer. Getting into the top government college of UP is a dream come true.", avatar: "PG" },
   { name: "Sameer Khan", exam: "JEE Main", rank: "AIR 1,12,400", college: "NIT Mizoram — Civil Engineering", quote: "I had lost all hope of becoming an NITian after JoSAA Round 6. Udaan Vidyapeeth's CSAB Special Round strategy helped me grab a vacant seat in the final round. Don't give up until the end!", avatar: "SK" },
   { name: "Neha Kulkarni", exam: "MHT-CET", rank: "98.6 %ile", college: "VJTI Mumbai — Electrical Engineering", quote: "VJTI has a very tricky seat matrix. The breakdown provided by the Udaan team helped me navigate the CAP rounds perfectly. Their preference list got me my first choice in Round 2.", avatar: "NK" }
 ];
@@ -89,9 +89,9 @@ export default function Home() {
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center">
             <div className="border-r border-white/20 md:border-r"><div className="font-heading font-bold text-3xl md:text-4xl text-white mb-1">6000+</div><div className="text-brand-light/90 font-medium text-sm">Students guided</div></div>
-            <div className="md:border-r md:border-white/20"><div className="font-heading font-bold text-3xl md:text-4xl text-white mb-1">50+</div><div className="text-brand-light/90 font-medium text-sm">Colleges covered</div></div>
+            <div className="md:border-r md:border-white/20"><div className="font-heading font-bold text-3xl md:text-4xl text-white mb-1">500+</div><div className="text-brand-light/90 font-medium text-sm">Colleges covered</div></div>
             <div className="border-r border-white/20 md:border-r"><div className="font-heading font-bold text-3xl md:text-4xl text-white mb-1">10+</div><div className="text-brand-light/90 font-medium text-sm">Exams we handle</div></div>
-            <div><div className="font-heading font-bold text-3xl md:text-4xl text-white mb-1">3</div><div className="text-brand-light/90 font-medium text-sm">Years of expertise</div></div>
+            <div><div className="font-heading font-bold text-3xl md:text-4xl text-white mb-1">5+</div><div className="text-brand-light/90 font-medium text-sm">Years of expertise</div></div>
           </div>
         </div>
       </section>
