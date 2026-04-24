@@ -1,0 +1,14 @@
+{
+  "name": "cloud-function",
+  "description": "Cloud Functions for Udaan Vidyapeeth",
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.1",
+    "razorpay": "^2.9.3"
+  },
+  "private": true
+}
