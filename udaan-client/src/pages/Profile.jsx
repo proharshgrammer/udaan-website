@@ -131,7 +131,7 @@ export default function Profile() {
                   
                   {/* Email */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address (Read-only)</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
                     <input type="email" name="email" value={profileData.email || ''} readOnly 
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-500 focus:outline-none cursor-not-allowed" />
                   </div>

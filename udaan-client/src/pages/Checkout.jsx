@@ -458,10 +458,9 @@ export default function Checkout() {
                         type="email"
                         name="email"
                         value={form.email}
-                        onChange={handleChange}
-                        required
+                        readOnly
                         placeholder="you@example.com"
-                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue focus:outline-none transition font-medium"
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 focus:outline-none cursor-not-allowed font-medium"
                       />
                     </div>
                   </div>
