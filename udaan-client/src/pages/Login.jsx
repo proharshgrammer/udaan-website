@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import { COLLECTIONS } from '../config/collections';
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,6 +16,50 @@ export default function Login() {
   
   const { login, signup, resetPassword, loginWithGoogle, currentUser } = useAuth();
   const navigate = useNavigate();
+
+  // Ensure a Firestore user document exists with all fields the app expects
+  async function ensureUserDoc(user) {
+    if (!user) return;
+    try {
+      const userRef = doc(db, COLLECTIONS.USERS, user.uid);
+      const snap = await getDoc(userRef);
+      // Fields matching app's UserModel exactly
+      const appFields = {
+        name: user.displayName || '',
+        email: user.email || '',
+        phoneNumber: '',
+        state: '',
+        field: '',
+        rank: '',
+        exam: '',
+        dob: '',
+        interest: '',
+        profileImageUrl: user.photoURL || '',
+      };
+      if (!snap.exists()) {
+        // First-time user — create doc with all app-required fields
+        await setDoc(userRef, appFields);
+      } else {
+        // Existing user — fill only missing fields
+        const data = snap.data();
+        const updates = {};
+        for (const [key, defaultVal] of Object.entries(appFields)) {
+          if (data[key] === undefined) {
+            // Copy from legacy web field names if available
+            if (key === 'state' && data.homeState) updates[key] = data.homeState;
+            else if (key === 'field' && data.category) updates[key] = data.category;
+            else if (key === 'rank' && data.crlRank) updates[key] = data.crlRank;
+            else updates[key] = defaultVal;
+          }
+        }
+        if (Object.keys(updates).length > 0) {
+          await setDoc(userRef, updates, { merge: true });
+        }
+      }
+    } catch (err) {
+      console.error('Error ensuring user doc:', err);
+    }
+  }
 
   // Auto-redirect if already logged in
   useEffect(() => {
@@ -39,11 +86,13 @@ export default function Login() {
         await resetPassword(cleanEmail);
         setMessage('Check your inbox for further instructions.');
       } else if (isLogin) {
-        await login(cleanEmail, password);
-        navigate('/my-courses'); // Navigate immediately after explicit act
+        const cred = await login(cleanEmail, password);
+        await ensureUserDoc(cred.user);
+        navigate('/my-courses');
       } else {
-        await signup(cleanEmail, password);
-        navigate('/my-courses'); // Navigate immediately after explicit act
+        const cred = await signup(cleanEmail, password);
+        await ensureUserDoc(cred.user);
+        navigate('/my-courses');
       }
     } catch (err) {
       console.error(err);
@@ -65,7 +114,8 @@ export default function Login() {
       setError('');
       setMessage('');
       setLoading(true);
-      await loginWithGoogle();
+      const cred = await loginWithGoogle();
+      await ensureUserDoc(cred.user);
       navigate('/my-courses');
     } catch (err) {
       console.error(err);

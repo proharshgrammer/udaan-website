@@ -13,13 +13,15 @@ export default function Profile() {
     name: '',
     email: '',
     phoneNumber: '',
-    homeState: '',
-    category: '',
-    crlRank: '',
+    state: '',
+    field: '',
+    rank: '',
     homeStateRank: '',
     categoryRank: '',
     exam: '',
     dob: '',
+    interest: '',
+    profileImageUrl: '',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -32,7 +34,15 @@ export default function Profile() {
         const docRef = doc(db, COLLECTIONS.USERS, currentUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setProfileData(prev => ({ ...prev, ...docSnap.data() }));
+          const d = docSnap.data();
+          setProfileData(prev => ({
+            ...prev,
+            ...d,
+            // Handle legacy web field names → app field names
+            state: d.state || d.homeState || '',
+            field: d.field || d.category || '',
+            rank: d.rank || d.crlRank || '',
+          }));
         } else {
           setProfileData(prev => ({ ...prev, email: currentUser.email || '' }));
         }
@@ -143,7 +153,7 @@ export default function Profile() {
                   {/* Home State */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Home State</label>
-                    <select name="homeState" value={profileData.homeState || ''} onChange={handleChange}
+                    <select name="state" value={profileData.state || ''} onChange={handleChange}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none appearance-none bg-white">
                       <option value="">Select State</option>
                       {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -153,7 +163,7 @@ export default function Profile() {
                   {/* Category */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Category</label>
-                    <select name="category" value={profileData.category || ''} onChange={handleChange}
+                    <select name="field" value={profileData.field || ''} onChange={handleChange}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none appearance-none bg-white">
                       <option value="">Select Category</option>
                       {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
@@ -170,7 +180,7 @@ export default function Profile() {
                   {/* CRL Rank */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">CRL Rank</label>
-                    <input type="text" name="crlRank" value={profileData.crlRank || ''} onChange={handleChange} placeholder="e.g. 15000"
+                    <input type="text" name="rank" value={profileData.rank || ''} onChange={handleChange} placeholder="e.g. 15000"
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-blue focus:outline-none" />
                   </div>
 

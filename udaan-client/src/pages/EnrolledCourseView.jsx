@@ -48,7 +48,7 @@ export default function EnrolledCourseView({ course, enrollmentDetails }) {
 
 function OverviewTab({ course, enrollmentDetails, navigate }) {
   const purchasePrice = course.price;
-  const enrolledAt = enrollmentDetails?.enrolledAt?.toDate?.() || new Date();
+  const enrolledAt = enrollmentDetails?.enrolledDate?.toDate?.() || enrollmentDetails?.enrolledAt?.toDate?.() || new Date();
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
