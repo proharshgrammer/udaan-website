@@ -1,5 +1,6 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onRequest } = require("firebase-functions/v2/https");
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const admin = require('firebase-admin');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
@@ -16,7 +17,7 @@ function getRazorpay() {
 }
 
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
-const GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwcrj6izIPIXU7iyTEVfv3KICUE9GBw_ezsuY777Bepex6KGLpBKtBZAtiQGpIjmI0bRQ/exec';
+const GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbynf_ek_pgz0330MmuTtHyFtvcDjcoPYm0O1tfckY_NNKf7LnYj0qenKk4ankfC96q6XA/exec';
 
 // ─── Shared helper: push one enrollment row to Google Sheets ──────────────────
 async function syncToGoogleSheets(payload) {
@@ -225,29 +226,8 @@ exports.razorpayWebhookSite = onRequest({
             await batch.commit();
             console.log(`✅ User ${uid} enrolled in Firestore!`);
 
-            // 4. Send to Google Sheets (Non-blocking backup)
-            try {
-                const sheetPayload = {
-                    courseName: courseName,
-                    name: userData.name || "",
-                    email: userData.email || "",
-                    phoneNumber: userData.phoneNumber || "",
-                    state: userData.state || "",
-                    field: userData.field || "",
-                    rank: userData.rank || "",
-                    homeStateRank: userData.homeStateRank || "",
-                    categoryRank: userData.categoryRank || "",
-                    pricePaid: Number(finalPrice),
-                    paymentId: paymentEntity.id,
-                    orderId: orderEntity.id,
-                };
-
-                await syncToGoogleSheets(sheetPayload);
-                console.log(`✅ Synced ${uid} to Google Sheets!`);
-            } catch (sheetErr) {
-                console.error('⚠️ Google Sheets Sync Failed:', sheetErr.message);
-                // We don't throw here; we still want to return 200 to Razorpay
-            }
+            // Google Sheets sync is now handled by the onStudentEnrolled
+            // Firestore trigger — no direct call here to avoid duplicates.
 
         } catch (err) {
             console.error('Webhook DB Error:', err);
@@ -323,3 +303,81 @@ exports.replayToSheets = onCall({
     }
 });
 
+// ─── FIRESTORE TRIGGER: Auto-sync new enrollments to Google Sheets ────────────
+// Fires whenever a student document is created under ANY course.
+// Catches both app + web enrollments — no matter which function wrote the doc.
+exports.onStudentEnrolled = onDocumentCreated({
+    document: 'courses/{courseId}/students/{uid}',
+    region: 'us-central1',
+}, async (event) => {
+    const { courseId, uid } = event.params;
+    const studentData = event.data?.data() || {};
+
+    try {
+        // 1. Fetch user profile (with Auth fallback for app-only students)
+        const userDoc = await admin.firestore().collection('users').doc(uid).get();
+        let userData = userDoc.exists ? userDoc.data() : {};
+
+        if (!userData.name && !userData.email) {
+            try {
+                const authUser = await admin.auth().getUser(uid);
+                userData = {
+                    ...userData,
+                    name: userData.name || authUser.displayName || '',
+                    email: userData.email || authUser.email || '',
+                    phoneNumber: userData.phoneNumber || authUser.phoneNumber || '',
+                };
+            } catch (_) { /* Auth record may not exist */ }
+        }
+
+        // 2. Fetch course name
+        const courseDoc = await admin.firestore().collection('courses').doc(courseId).get();
+        const courseName = courseDoc.exists ? courseDoc.data().name : courseId;
+
+        // 3. Try to find payment details from the enrollment doc or purchases subcollection
+        let paymentId = studentData.paymentId || '';
+        let orderId = studentData.orderId || '';
+        let pricePaid = studentData.pricePaid || 0;
+
+        if (!paymentId) {
+            try {
+                const purchasesSnap = await admin.firestore()
+                    .collection('purchases').doc(uid)
+                    .collection('user_purchases')
+                    .where('courseId', '==', courseId)
+                    .orderBy('purchaseDate', 'desc')
+                    .limit(1)
+                    .get();
+                if (!purchasesSnap.empty) {
+                    const p = purchasesSnap.docs[0].data();
+                    paymentId = p.paymentId || '';
+                    orderId = purchasesSnap.docs[0].id || '';
+                    pricePaid = p.pricePaid || 0;
+                }
+            } catch (_) { /* purchases may not exist for app-only students */ }
+        }
+
+        // 4. Sync to Google Sheets
+        const sheetPayload = {
+            courseName,
+            name: userData.name || studentData.name || '',
+            email: userData.email || studentData.email || '',
+            phoneNumber: userData.phoneNumber || studentData.phoneNumber || '',
+            state: userData.state || '',
+            field: userData.field || '',
+            rank: userData.rank || '',
+            homeStateRank: userData.homeStateRank || '',
+            categoryRank: userData.categoryRank || '',
+            pricePaid: Number(pricePaid),
+            paymentId,
+            orderId,
+        };
+
+        await syncToGoogleSheets(sheetPayload);
+        console.log(`✅ onStudentEnrolled: synced ${uid} → ${courseName} to Google Sheets`);
+
+    } catch (err) {
+        console.error(`⚠️ onStudentEnrolled: failed for ${uid} in ${courseId}:`, err.message);
+        // Don't throw — we don't want to retry on transient Sheets failures
+    }
+});
