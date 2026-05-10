@@ -14,7 +14,7 @@ import { COLLECTIONS } from '../config/collections';
 export default function Courses() {
   const { data: courses, loading } = useCollection(COLLECTIONS.COURSES, [orderBy('createdDate', 'desc')]);
 
-  const filteredCourses = courses || [];
+  const filteredCourses = (courses || []).filter(c => c.isEnabled !== false);
 
   return (
     <div className="min-h-screen bg-gray-50">

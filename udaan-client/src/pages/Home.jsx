@@ -120,7 +120,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {courses.slice(0, 3).map(c => <CourseCard key={c.id} course={c} />)}
+            {courses.filter(c => c.isEnabled !== false).slice(0, 3).map(c => <CourseCard key={c.id} course={c} />)}
           </div>
           <div className="mt-8 text-center md:hidden">
             <Link to="/courses" className="text-brand-blue font-medium hover:underline">View all courses &rarr;</Link>

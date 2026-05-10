@@ -62,6 +62,11 @@ export default function CourseDetail() {
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="w-8 h-8 rounded-full border-4 border-brand-blue border-t-transparent animate-spin"></div></div>;
   if (!course) return <div className="min-h-screen flex items-center justify-center">Course not found.</div>;
 
+  // Disabled courses: enrolled students can still access, everyone else sees "not found"
+  if (course.isEnabled === false && !isEnrolled) {
+    return <div className="min-h-screen flex items-center justify-center">Course not found.</div>;
+  }
+
   if (isEnrolled) {
     return <EnrolledCourseView course={course} enrollmentDetails={enrollmentDetails} />;
   }
@@ -80,7 +85,27 @@ export default function CourseDetail() {
             {/* Left Content */}
             <div className="flex-1 p-6 md:p-8 lg:p-10 flex flex-col justify-center relative">
                <div className="absolute top-6 right-6 lg:top-8 lg:right-10 flex gap-3 text-gray-400">
-                 <button className="hover:text-brand-blue transition"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg></button>
+                 <button
+                   className="hover:text-brand-blue transition relative"
+                   title="Share this course"
+                   onClick={async () => {
+                     const shareUrl = window.location.href;
+                     const shareData = { title: course.name, text: `Check out "${course.name}" on Udaan Vidyapeeth`, url: shareUrl };
+                     try {
+                       if (navigator.share) {
+                         await navigator.share(shareData);
+                       } else {
+                         await navigator.clipboard.writeText(shareUrl);
+                         // Brief visual feedback
+                         const btn = document.getElementById('share-btn-tooltip');
+                         if (btn) { btn.classList.remove('hidden'); setTimeout(() => btn.classList.add('hidden'), 2000); }
+                       }
+                     } catch (_) { /* user cancelled share dialog */ }
+                   }}
+                 >
+                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                   <span id="share-btn-tooltip" className="hidden absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">Link copied!</span>
+                 </button>
                </div>
 
                <div className="flex items-center gap-3 mb-4 mt-2">
