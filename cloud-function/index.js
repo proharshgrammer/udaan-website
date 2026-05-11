@@ -1,6 +1,6 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onRequest } = require("firebase-functions/v2/https");
-const { onDocumentCreated } = require("firebase-functions/v2/firestore");
+const { onDocumentWritten } = require("firebase-functions/v2/firestore");
 const admin = require('firebase-admin');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
@@ -304,14 +304,41 @@ exports.replayToSheets = onCall({
 });
 
 // ─── FIRESTORE TRIGGER: Auto-sync new enrollments to Google Sheets ────────────
-// Fires whenever a student document is created under ANY course.
-// Catches both app + web enrollments — no matter which function wrote the doc.
-exports.onStudentEnrolled = onDocumentCreated({
+// Uses onDocumentWritten (not onDocumentCreated) to handle race conditions:
+//   - Web flow: Checkout.jsx creates doc first (with paymentId) → triggers sync
+//   - App flow: App creates doc (no paymentId) → client/webhook later adds paymentId → triggers sync
+// Dedup: only syncs when paymentId appears for the first time.
+
+exports.onStudentEnrolled = onDocumentWritten({
     document: 'courses/{courseId}/students/{uid}',
     region: 'us-central1',
 }, async (event) => {
     const { courseId, uid } = event.params;
-    const studentData = event.data?.data() || {};
+
+    const beforeData = event.data?.before?.data() || {};
+    const afterData = event.data?.after?.data();
+
+    // Document was deleted — nothing to sync
+    if (!afterData) return;
+
+    // Dedup: only sync when paymentId appears for the first time
+    const hadPaymentId = !!beforeData.paymentId;
+    const hasPaymentId = !!afterData.paymentId;
+
+    if (hadPaymentId) {
+        // paymentId was already present — this is an admin edit or re-merge, skip
+        return;
+    }
+
+    if (!hasPaymentId) {
+        // No paymentId yet (e.g., app created the doc but payment not confirmed) — skip for now
+        // The trigger will fire again when paymentId is written
+        console.log(`⏳ onStudentEnrolled: skipping ${uid} in ${courseId} — no paymentId yet`);
+        return;
+    }
+
+    // paymentId just appeared → this is the moment we sync
+    const studentData = afterData;
 
     try {
         // 1. Fetch user profile (with Auth fallback for app-only students)
@@ -334,12 +361,12 @@ exports.onStudentEnrolled = onDocumentCreated({
         const courseDoc = await admin.firestore().collection('courses').doc(courseId).get();
         const courseName = courseDoc.exists ? courseDoc.data().name : courseId;
 
-        // 3. Try to find payment details from the enrollment doc or purchases subcollection
+        // 3. Payment details — prefer student doc, fall back to purchases
         let paymentId = studentData.paymentId || '';
         let orderId = studentData.orderId || '';
         let pricePaid = studentData.pricePaid || 0;
 
-        if (!paymentId) {
+        if (!orderId) {
             try {
                 const purchasesSnap = await admin.firestore()
                     .collection('purchases').doc(uid)
@@ -350,9 +377,8 @@ exports.onStudentEnrolled = onDocumentCreated({
                     .get();
                 if (!purchasesSnap.empty) {
                     const p = purchasesSnap.docs[0].data();
-                    paymentId = p.paymentId || '';
                     orderId = purchasesSnap.docs[0].id || '';
-                    pricePaid = p.pricePaid || 0;
+                    pricePaid = pricePaid || p.pricePaid || 0;
                 }
             } catch (_) { /* purchases may not exist for app-only students */ }
         }
@@ -378,6 +404,5 @@ exports.onStudentEnrolled = onDocumentCreated({
 
     } catch (err) {
         console.error(`⚠️ onStudentEnrolled: failed for ${uid} in ${courseId}:`, err.message);
-        // Don't throw — we don't want to retry on transient Sheets failures
     }
 });
