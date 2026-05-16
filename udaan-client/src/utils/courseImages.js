@@ -3,7 +3,7 @@ export const getHardcodedCourseImage = (courseName) => {
   const name = courseName.toLowerCase();
   
   if (name.includes('combo')) return '/banners/Combo Program.webp';
-  if (name.includes('jac') && name.includes('ggsipu')) return '/banners/JACD + GGSIPU.webp';
+  if (name.includes('jac')) return '/banners/JACD + GGSIPU.webp';
   if (name.includes('one homestate')) return '/banners/Josaa Csab + Hosmestate.webp';
   if (name.includes('josaa and csab')) return '/banners/Josaa + Csab.webp';
   if (name.includes('other') || name.includes('nfsu') || name.includes('rru') || name.includes('jac chandigarh') || name.includes('separate')) return '/banners/Other Counselling.webp';
