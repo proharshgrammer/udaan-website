@@ -1,9 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { getHardcodedCourseImage } from '../utils/courseImages';
 
 export default function CourseCard({ course, isEnrolled }) {
   const { id, name, thumbnailUrl, thumbnail, price, discountedPrice, about, mentorName, successPercentage, whatsappLink } = course;
-  const courseImage = thumbnailUrl || thumbnail;
+  let courseImage = thumbnailUrl || thumbnail;
+  if (courseImage?.includes('cloudinary.com')) {
+    courseImage = getHardcodedCourseImage(name);
+  }
   
   // Clean 'about' for concise display
   const shortAbout = about ? (about.length > 80 ? about.substring(0, 80) + '...' : about) : '';

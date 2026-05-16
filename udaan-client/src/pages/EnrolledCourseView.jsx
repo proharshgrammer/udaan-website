@@ -8,6 +8,7 @@ import { COLLECTIONS } from '../config/collections';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import { getHardcodedCourseImage } from '../utils/courseImages';
 
 export default function EnrolledCourseView({ course, enrollmentDetails }) {
   const [activeTab, setActiveTab] = useState('Overview');
@@ -57,9 +58,9 @@ function OverviewTab({ course, enrollmentDetails, navigate }) {
         
         {/* Banner Area */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-           {(course.thumbnail || course.thumbnailUrl) ? (
+           {((course.thumbnail || course.thumbnailUrl) && !(course.thumbnail || course.thumbnailUrl).includes('cloudinary.com')) || getHardcodedCourseImage(course.name) ? (
              <div className="w-full h-48 md:h-64 bg-gray-50 flex items-center justify-center p-4 border-b border-gray-100/60">
-               <img src={course.thumbnail || course.thumbnailUrl} alt={course.name} className="max-w-full max-h-full object-contain mix-blend-multiply rounded-lg" />
+               <img src={getHardcodedCourseImage(course.name) || course.thumbnail || course.thumbnailUrl} alt={course.name} className="max-w-full max-h-full object-contain mix-blend-multiply rounded-lg" />
              </div>
            ) : (
              <div className="w-full h-48 md:h-64 bg-gradient-to-br from-brand-light to-brand-blue flex items-center justify-center p-8 text-center text-white font-heading font-bold text-2xl">

@@ -16,7 +16,11 @@ export default function BannerCarousel() {
         const querySnapshot = await getDocs(collection(db, COLLECTIONS.BANNERS));
         const loadedBanners = [];
         querySnapshot.forEach((doc) => {
-          loadedBanners.push({ id: doc.id, ...doc.data() });
+          const data = doc.data();
+          if (data.imageUrl && data.imageUrl.includes('cloudinary.com')) {
+            data.imageUrl = 'https://placehold.co/1200x400/1e3a8a/ffffff?text=Udaan+Vidyapeeth';
+          }
+          loadedBanners.push({ id: doc.id, ...data });
         });
         setBanners(loadedBanners);
       } catch (err) {

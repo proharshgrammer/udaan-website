@@ -5,6 +5,7 @@ import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { COLLECTIONS } from "../config/collections";
 import Navbar from "../components/Navbar";
+import { getHardcodedCourseImage } from "../utils/courseImages";
 
 const INDIAN_STATES = [
   "Andhra Pradesh",
@@ -374,9 +375,9 @@ export default function Checkout() {
           <div className="lg:col-span-3 space-y-6">
             {/* Course Summary Card */}
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
-              {course.thumbnailUrl ? (
+              {(course.thumbnailUrl && !course.thumbnailUrl.includes('cloudinary.com')) || getHardcodedCourseImage(course.name) ? (
                 <img
-                  src={course.thumbnailUrl}
+                  src={getHardcodedCourseImage(course.name) || course.thumbnailUrl}
                   alt={course.name}
                   className="w-20 h-16 rounded-xl object-cover shrink-0 border border-gray-100"
                 />
