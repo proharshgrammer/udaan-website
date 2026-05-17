@@ -8,14 +8,14 @@ function doPost(e) {
     
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     
-    // ─── Fuzzy-match tab name ─────────────────────────────────────────
+    // ─── Strict match tab name (case-insensitive, whitespace-normalized) ──
     var sheet = ss.getSheetByName(sheetName);
     if (!sheet) {
       var allSheets = ss.getSheets();
       var incomingClean = sheetName.replace(/\s+/g, ' ').trim().toLowerCase();
       for (var i = 0; i < allSheets.length; i++) {
         var tabClean = allSheets[i].getName().replace(/\s+/g, ' ').trim().toLowerCase();
-        if (tabClean === incomingClean || tabClean.indexOf(incomingClean) !== -1 || incomingClean.indexOf(tabClean) !== -1) {
+        if (tabClean === incomingClean) {
           sheet = allSheets[i];
           break;
         }
