@@ -8,6 +8,7 @@ export const getHardcodedCourseImage = (courseName) => {
   if (name.includes('josaa and csab')) return '/banners/josaa-csab.webp';
   if (name.includes('other') || name.includes('nfsu') || name.includes('rru') || name.includes('jac chandigarh') || name.includes('separate')) return '/banners/other-counselling.webp';
   if (name.includes(' up ') || name.startsWith('up ') || name.includes('aktu') || name.includes('hbtu') || name.includes('mmut')) return '/banners/all-up-counselling.webp';
-  
+  if (name.includes('ggsipu')) return '/banners/Ggsipu.webp';
+
   return null;
 };
