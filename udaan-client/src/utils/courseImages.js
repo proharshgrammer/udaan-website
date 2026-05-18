@@ -9,6 +9,10 @@ export const getHardcodedCourseImage = (courseName) => {
   if (name.includes('other') || name.includes('nfsu') || name.includes('rru') || name.includes('jac chandigarh') || name.includes('separate')) return '/banners/other-counselling.webp';
   if (name.includes(' up ') || name.startsWith('up ') || name.includes('aktu') || name.includes('hbtu') || name.includes('mmut')) return '/banners/all-up-counselling.webp';
   if (name.includes('ggsipu')) return '/banners/Ggsipu.webp';
+  if (name.includes('mhtcet')) return '/banners/mhtcet.webp';
+  if (name.includes('comedk')) return '/banners/comedk.webp';
+  if (name.includes('mpdte')) return '/banners/mpdte.webp';
+  if (name.includes('hstes')) return '/banners/hstes.webp';
 
   return null;
 };

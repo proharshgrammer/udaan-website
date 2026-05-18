@@ -5,7 +5,7 @@ import { getHardcodedCourseImage } from '../utils/courseImages';
 export default function CourseCard({ course, isEnrolled }) {
   const { id, name, thumbnailUrl, thumbnail, price, discountedPrice, about, mentorName, successPercentage, whatsappLink } = course;
   let courseImage = thumbnailUrl || thumbnail;
-  if (courseImage?.includes('cloudinary.com')) {
+  if (!courseImage || courseImage.includes('cloudinary.com')) {
     courseImage = getHardcodedCourseImage(name);
   }
   
