@@ -13,6 +13,7 @@ export const getHardcodedCourseImage = (courseName) => {
   if (name.includes('comedk')) return '/banners/comedk.webp';
   if (name.includes('mpdte')) return '/banners/mpdte.webp';
   if (name.includes('hstes')) return '/banners/hstes.webp';
+  if (name.includes('webinar')) return '/banners/webinar.webp';
 
   return null;
 };
