@@ -7,6 +7,7 @@ const Blog = lazy(() => import('./pages/Blog'))
 const Leads = lazy(() => import('./pages/Leads'))
 const Media = lazy(() => import('./pages/Media'))
 const FeaturedVideos = lazy(() => import('./pages/FeaturedVideos'))
+const Enrollments = lazy(() => import('./pages/Enrollments'))
 
 import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Sidebar';
@@ -31,6 +32,7 @@ function App() {
           <Route path="/leads" element={<ProtectedRoute><Layout><Leads /></Layout></ProtectedRoute>} />
           <Route path="/media" element={<ProtectedRoute><Layout><Media /></Layout></ProtectedRoute>} />
           <Route path="/featured-videos" element={<ProtectedRoute><Layout><FeaturedVideos /></Layout></ProtectedRoute>} />
+          <Route path="/enrollments" element={<ProtectedRoute><Layout><Enrollments /></Layout></ProtectedRoute>} />
         </Routes>
       </Suspense>
     </Router>
