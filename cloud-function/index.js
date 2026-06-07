@@ -94,7 +94,8 @@ exports.createOrder = onCall({
             notes: {
                 uid: uid,
                 courseId: courseId,
-                finalPrice: finalPrice.toString()
+                finalPrice: finalPrice.toString(),
+                couponApplied: promoCode || ""
             }
         };
 
@@ -143,7 +144,7 @@ exports.razorpayWebhookSite = onRequest({
 
         try {
             const batch = admin.firestore().batch();
-            const { uid, courseId, finalPrice } = notes;
+            const { uid, courseId, finalPrice, couponApplied } = notes;
 
             // 1. Record the purchase in user's purchases subcollection
             const purchaseRef = admin.firestore()
@@ -221,6 +222,20 @@ exports.razorpayWebhookSite = onRequest({
                 studentId: uid,
                 studentName: userData.name || 'Student',
                 enrolledDate: admin.firestore.FieldValue.serverTimestamp(), // App requires enrolledDate
+                
+                // Web extra fields:
+                name: userData.name || 'Student',
+                email: userData.email || '',
+                phoneNumber: userData.phoneNumber || '',
+                state: userData.state || '',
+                field: userData.field || '',
+                rank: userData.rank || '',
+                homeStateRank: userData.homeStateRank || '',
+                categoryRank: userData.categoryRank || '',
+                paymentId: paymentEntity.id,
+                orderId: orderEntity.id,
+                pricePaid: Number(finalPrice),
+                couponApplied: (couponApplied && couponApplied.trim()) ? couponApplied : null,
             }, { merge: true });
 
             await batch.commit();
