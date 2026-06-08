@@ -14,6 +14,6 @@ export const getHardcodedCourseImage = (courseName) => {
   if (name.includes('mpdte')) return '/banners/mpdte.webp';
   if (name.includes('hstes')) return '/banners/hstes.webp';
   if (name.includes('webinar')) return '/banners/webinar.webp';
-if (name.includes('Filling')) return '/banners/josaa_choice.webp';
+if (name.includes('filling')) return '/banners/josaa_choice.webp';
   return null;
 };
