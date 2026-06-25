@@ -65,7 +65,6 @@ export default function Checkout() {
     state: "",
     field: "",
     rank: "",
-    homeStateRank: "",
     categoryRank: "",
   });
 
@@ -604,7 +603,7 @@ export default function Checkout() {
                   </div>
 
                   {/* Home State Rank */}
-                  <div>
+                  {/* <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                       Home State Rank
                     </label>
@@ -616,7 +615,7 @@ export default function Checkout() {
                       placeholder="Optional"
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue focus:outline-none transition font-medium"
                     />
-                  </div>
+                  </div> */}
 
                   {/* Category Rank */}
                   <div>
