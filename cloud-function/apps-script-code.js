@@ -1,4 +1,6 @@
 // ─── PASTE THIS INTO YOUR GOOGLE APPS SCRIPT EDITOR ───────────────────────────
+// This script handles COURSE ENROLLMENT rows only.
+// For leads, see leads-apps-script.js (separate Sheet + deployment).
 // (Extensions → Apps Script → replace Code.gs → Deploy → New Deployment)
 
 function doPost(e) {

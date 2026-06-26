@@ -1,6 +1,6 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { onRequest } = require("firebase-functions/v2/https");
-const { onDocumentWritten } = require("firebase-functions/v2/firestore");
+const { onDocumentWritten, onDocumentCreated } = require("firebase-functions/v2/firestore");
 const admin = require('firebase-admin');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
@@ -18,6 +18,10 @@ function getRazorpay() {
 
 const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 const GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbynf_ek_pgz0330MmuTtHyFtvcDjcoPYm0O1tfckY_NNKf7LnYj0qenKk4ankfC96q6XA/exec';
+
+// Leads sheet — set LEADS_SHEETS_WEBHOOK_URL in Firebase env config.
+// If not set, falls back to the same Apps Script deployment as enrollments.
+const LEADS_SHEETS_WEBHOOK_URL = process.env.LEADS_SHEETS_WEBHOOK_URL || GOOGLE_SHEETS_WEBHOOK_URL;
 
 // ─── Shared helper: push one enrollment row to Google Sheets ──────────────────
 async function syncToGoogleSheets(payload) {
@@ -419,5 +423,53 @@ exports.onStudentEnrolled = onDocumentWritten({
 
     } catch (err) {
         console.error(`⚠️ onStudentEnrolled: failed for ${uid} in ${courseId}:`, err.message);
+    }
+});
+
+// ─── FIRESTORE TRIGGER: Auto-sync new leads to Google Sheets ────────────────────────
+const LEADS_SHEET_NAME = 'Leads';
+
+exports.onLeadCreated = onDocumentCreated({
+    document: 'leads/{leadId}',
+    region: 'us-central1',
+}, async (event) => {
+    const leadId = event.params.leadId;
+    const data = event.data?.data();
+
+    if (!data) {
+        console.log('onLeadCreated: no data, skipping.');
+        return;
+    }
+
+    // Convert Firestore Timestamp to a readable string
+    const createdAt = data.createdAt
+        ? data.createdAt.toDate().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+        : new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+    const payload = {
+        sheetName: LEADS_SHEET_NAME,   // Apps Script will route to this tab
+        leadId,
+        name: data.name || '',
+        phone: data.phone || '',
+        email: data.email || '',
+        exam: data.exam || '',
+        rank: data.rank || '',
+        city: data.city || '',
+        createdAt,
+    };
+
+    try {
+        const response = await fetch(LEADS_SHEETS_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+            throw new Error(`Apps Script responded with HTTP ${response.status}`);
+        }
+        console.log(`✅ onLeadCreated: synced lead ${leadId} (${data.name}) to Google Sheets`);
+    } catch (err) {
+        console.error(`⚠️ onLeadCreated: failed to sync lead ${leadId}:`, err.message);
+        // Non-fatal — the lead is already saved in Firestore
     }
 });
