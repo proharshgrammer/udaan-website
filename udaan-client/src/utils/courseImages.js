@@ -7,7 +7,7 @@ export const getHardcodedCourseImage = (courseName) => {
   if (name.includes('one homestate')) return '/banners/josaa-csab-homestate.webp';
   if (name.includes('josaa and csab')) return '/banners/josaa-csab.webp';
   if (name.includes('other') || name.includes('nfsu') || name.includes('rru') || name.includes('jac chandigarh') || name.includes('separate')) return '/banners/other-counselling.webp';
-  if (name.includes(' up ') || name.startsWith('up ') || name.includes('aktu') || name.includes('hbtu') || name.includes('mmut')) return '/banners/all-up-counselling.webp';
+  if (name.includes(' up ') || name.startsWith('up ')) return '/banners/all-up-counselling.webp';
   if (name.includes('ggsipu')) return '/banners/Ggsipu.webp';
   if (name.includes('mhtcet')) return '/banners/mhtcet.webp';
   if (name.includes('comedk')) return '/banners/comedk.webp';
@@ -16,5 +16,6 @@ export const getHardcodedCourseImage = (courseName) => {
   if (name.includes('webinar')) return '/banners/webinar.webp';
   if (name.includes('josaa choice filling')) return '/banners/josaa_choice.webp';
   if (name.includes('csab')) return '/banners/csab_banner.webp';
+  if (name.includes('aktu')) return '/banners/aktu_only.webp';
   return null;
 };
